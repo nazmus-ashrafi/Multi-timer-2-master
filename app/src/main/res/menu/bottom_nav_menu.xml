@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/bottom_nav_dashboard"
+        android:title="Dashboard"
+        android:icon="@drawable/bottom_nav_dashboard_icon"
+        app:cnb_backgroundColor="@color/cardColorBlueL"/>
+
+    <item
+        android:id="@+id/bottom_nav_save"
+        android:title="Saved timers"
+        android:icon="@drawable/bottom_nav_save_icon"
+        app:cnb_backgroundColor="@color/cardColorCreamL"/>
+
+    <item
+        android:id="@+id/bottom_nav_settings"
+        android:title="Settings"
+        android:icon="@drawable/bottom_nav_manage_icon"
+        app:cnb_backgroundColor="@color/cardColorIndigoL"/>
+
+</menu>

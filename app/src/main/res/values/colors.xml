@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#9FA8DA</color>
+    <color name="colorPrimaryDark">#9FA8DA</color>
+    <color name="colorAccent">#231D13</color>
+    <color name="btnColor">#CC4C84</color>
+    <color name="colorWhite">#FFFFFF</color>
+    <color name="colorBottomMenu">#902B58</color>
+    <color name="colorBackground">#fafafa</color>
+    <color name="backgroundWhite">#fafafa</color>
+    <color name="colorTextBlack">#231D13</color>
+    <color name="colorBlack">#231D13</color>
+
+    <color name="cardColor1">#A7D8A9</color>
+    <color name="myThemeColor">#C0C6E3</color>
+    <color name="inputBackgroundColor">#F5F5FB</color>
+    <color name="primaryButtonColor">#7982D0</color>
+    <color name="bottomNavBar">#71A6E8</color>
+    <color name="bottomStartButton">#D6749F</color>
+
+
+
+    <color name="cardColorBlueH">#B5CEF2</color>
+    <color name="cardColorBlueL">#C1D5F2</color>
+    <color name="cardColorCreamH">#EFE3CB</color>
+    <color name="cardColorCreamL">#F0E9DA</color>
+    <color name="cardColorIndigoH">#D0D4EA</color>
+    <color name="cardColorIndigoL">#E3E4EA</color>
+
+
+
+
+
+
+</resources>

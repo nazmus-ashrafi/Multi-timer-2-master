@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "386430100109",
+    "firebase_url": "https://multi-timer-2.firebaseio.com",
+    "project_id": "multi-timer-2",
+    "storage_bucket": "multi-timer-2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:386430100109:android:b87075499864174560b8c4",
+        "android_client_info": {
+          "package_name": "com.nazmusashrafi.multi_timer_2_master"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "386430100109-qfuqik5cdfpc35816b848pqr0tuovaat.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.nazmusashrafi.multi_timer_2_master",
+            "certificate_hash": "ce8cda99bcff599b4ce99e0f55b366d3e71788e9"
+          }
+        },
+        {
+          "client_id": "386430100109-qn204jpold4rqf0t65j720gn800jd9jp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDwaILF8L881_FWogAbs0xw3-fEOKS13qE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "386430100109-qn204jpold4rqf0t65j720gn800jd9jp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
