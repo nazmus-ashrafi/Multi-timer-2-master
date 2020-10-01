@@ -24,8 +24,6 @@ import android.app.TimePickerDialog;
 public class TimerInputs extends AppCompatActivity {
 
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

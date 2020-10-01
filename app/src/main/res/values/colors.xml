@@ -18,18 +18,23 @@
     <color name="bottomNavBar">#71A6E8</color>
     <color name="bottomStartButton">#D6749F</color>
 
-
+    //
 
     <color name="cardColorBlueH">#B5CEF2</color>
-    <color name="cardColorBlueL">#C1D5F2</color>
     <color name="cardColorCreamH">#EFE3CB</color>
-    <color name="cardColorCreamL">#F0E9DA</color>
     <color name="cardColorIndigoH">#D0D4EA</color>
+
+    //card colors
+    <color name="cardColorBlueL">#C1D5F2</color>
+    <color name="cardColorCreamL">#F0E9DA</color>
     <color name="cardColorIndigoL">#E3E4EA</color>
-
-
-
-
+    <color name="cardColorSkyBlueL">#CAE6FC</color>
+    <color name="cardColorGreenL">#CDF5CE</color>
+    <color name="cardColorYellowL">#EDEACD</color>
+    <color name="cardColorPurpleL">#E7D0EB</color>
+    <color name="cardColorPinkL">#EBCDD2</color>
+    <color name="cardColorGrapeL">#D5CDEB</color>
+    <color name="cardColorTealL">#D8EDEC</color>
 
 
 </resources>

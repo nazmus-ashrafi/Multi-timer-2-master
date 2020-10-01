@@ -6,10 +6,10 @@ public class SingleTimer implements Serializable {
     private int stepNumber;
     private String title;
     private String description;
-    private int time;
-    private String color;
+    private long time;
+    private int color;
 
-    public SingleTimer(int stepNumber, String title, String description, int time, String color) {
+    public SingleTimer(int stepNumber, String title, String description, long time, int color) {
         this.stepNumber = stepNumber;
         this.title = title;
         this.description = description;
@@ -41,19 +41,19 @@ public class SingleTimer implements Serializable {
         this.description = description;
     }
 
-    public int getTime() {
+    public long getTime() {
         return time;
     }
 
-    public void setTime(int time) {
+    public void setTime(long time) {
         this.time = time;
     }
 
-    public String getColor() {
+    public int getColor() {
         return color;
     }
 
-    public void setColor(String color) {
+    public void setColor(int color) {
         this.color = color;
     }
 }

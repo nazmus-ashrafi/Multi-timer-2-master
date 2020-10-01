@@ -6,7 +6,7 @@ public class MultiTimer {
 
     private int totalSteps;
     private String title;
-    private int totalTime;
+    private long totalTime;
     private ArrayList<SingleTimer> singleTimerArrayList;
     private String id;
 
@@ -38,11 +38,11 @@ public class MultiTimer {
         this.title = title;
     }
 
-    public int getTotalTime() {
+    public long getTotalTime() {
         return totalTime;
     }
 
-    public void setTotalTime(int totalTime) {
+    public void setTotalTime(long totalTime) {
         this.totalTime = totalTime;
     }
 
