@@ -1,5 +1,7 @@
 package com.nazmusashrafi.multi_timer_2_master;
 
+import android.text.Editable;
+
 import java.io.Serializable;
 
 public class SingleTimer implements Serializable {

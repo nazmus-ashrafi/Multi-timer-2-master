@@ -108,7 +108,6 @@ public class AdapterTimers extends RecyclerView.Adapter<AdapterTimers.ViewHolder
                 System.out.println(position);
 
                 //onScroll listener
-
                 notifyDataSetChanged();
 
             }

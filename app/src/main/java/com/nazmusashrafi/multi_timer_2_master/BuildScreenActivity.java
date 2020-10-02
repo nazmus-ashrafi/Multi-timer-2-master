@@ -12,12 +12,9 @@ import androidx.recyclerview.widget.SnapHelper;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.Layout;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,12 +37,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Locale;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -226,7 +221,6 @@ public class BuildScreenActivity extends AppCompatActivity {
 
         Button removeButton = (Button) findViewById(R.id.removeBtn);
 
-
         removeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -263,28 +257,205 @@ public class BuildScreenActivity extends AppCompatActivity {
                         singleTimer.get(i).setStepNumber(i+1);
                     }
 
+
+
                     multiTimer.setSingleTimerArrayList(singleTimer);
                     multiTimer.setTitle("");
                     multiTimer.setTotalSteps(singleTimer.size());
-                    multiTimer.setTotalTime(totalTime);
+
+                    long updatedTotalTime = 0;
+
+                    for(int i = 0; i<singleTimer.size();i++){
+                        updatedTotalTime = updatedTotalTime + singleTimer.get(i).getTime();
+                    }
+
+                    multiTimer.setTotalTime(updatedTotalTime);
+
                     multiTimer.setId(id);
                     referenceMultiTimer.setValue(multiTimer);
                     mAdapter.notifyDataSetChanged();
 
                 }
 
+//                TextView totalTimeView = findViewById(R.id.totalTimeView);
+//
+//                displayTimeAtTop = totalTime;
+//
+//                String totalhm = String.format("%02d hr : %02d min", TimeUnit.MILLISECONDS.toHours(displayTimeAtTop),
+//                        TimeUnit.MILLISECONDS.toMinutes(displayTimeAtTop) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(displayTimeAtTop)));
+//
+//                totalTimeView.setText("Total time: " + totalhm);
+
+                long updatedTotalTime = 0;
+
+                for(int i = 0; i<singleTimer.size();i++){
+                    updatedTotalTime = updatedTotalTime + singleTimer.get(i).getTime();
+                }
+
+                multiTimer.setTotalTime(updatedTotalTime);
+
+                //top total time display update
                 TextView totalTimeView = findViewById(R.id.totalTimeView);
 
-                displayTimeAtTop = totalTime;
+                String updatedtotalhm = String.format("%02d hr : %02d min", TimeUnit.MILLISECONDS.toHours(updatedTotalTime),
+                        TimeUnit.MILLISECONDS.toMinutes(updatedTotalTime) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(updatedTotalTime)));
 
-                String totalhm = String.format("%02d hr : %02d min", TimeUnit.MILLISECONDS.toHours(displayTimeAtTop),
-                        TimeUnit.MILLISECONDS.toMinutes(displayTimeAtTop) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(displayTimeAtTop)));
+                totalTimeView.setText("Total time: " + updatedtotalhm);
+                //--
+            }
+        });
 
-                totalTimeView.setText("Total time: " + totalhm);
+        // update button functionality
+
+        Button editButton = (Button) findViewById(R.id.editBtn);
+
+        editButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //open alertdialog populated with previous values
+                editTask(position);
+
+                //push to db with updated values
+
+
 
             }
         });
 
+    }
+
+    private void editTask(final int position) {
+
+        final AlertDialog.Builder myDialog = new AlertDialog.Builder(this,R.style.CustomDialog);
+
+
+        LayoutInflater inflater = LayoutInflater.from(this);
+
+        View myView = inflater.inflate(R.layout.activity_timer_inputs,null);
+        myDialog.setView(myView);
+
+        final AlertDialog dialog = myDialog.create();
+        dialog.setCancelable(false);
+        dialog.show();
+
+        //timer input declarations
+        final EditText title = myView.findViewById(R.id.tvMainTitle);
+        final TextView step = myView.findViewById(R.id.tvMainTitleStep);
+        final EditText desc = myView.findViewById(R.id.tvDesc);
+        final Button confirm = myView.findViewById(R.id.btConfirm);
+        Button cancel = myView.findViewById(R.id.btCancel);
+        Button duration = myView.findViewById(R.id.btDuration);
+        final TextView tvTimerView = myView.findViewById(R.id.tvTimerView);
+        final ImageView inputViewColor = myView.findViewById(R.id.imgArticle);
+        //----
+
+        String retrivedTitle;
+        final String retrivedId;
+
+
+        // get values from db and populate textviews
+        step.setText("Step " + Integer.toString(position+1));
+
+//        reference = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID);
+
+        referenceMultiTimer.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+//                referenceMultiTimer = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child(multiTimer.getId());
+
+                if((String) dataSnapshot.child("singleTimerArrayList").child(Integer.toString(position)).child("title").getValue()!=null){
+//                    ArrayList<SingleTimer> retrivedArray = (ArrayList<SingleTimer>) dataSnapshot.child("singleTimerArrayList").getValue();
+
+                    //populate inputs with retrieved data
+                    String retrivedDesc = (String) dataSnapshot.child("singleTimerArrayList").child(Integer.toString(position)).child("description").getValue();
+                    String retrivedTitle = (String) dataSnapshot.child("singleTimerArrayList").child(Integer.toString(position)).child("title").getValue();
+                    Long retrivedTime = (Long) dataSnapshot.child("singleTimerArrayList").child(Integer.toString(position)).child("time").getValue();
+                    String totalTimeDisplay = String.format("%02d hr : %02d min", TimeUnit.MILLISECONDS.toHours(retrivedTime),
+                            TimeUnit.MILLISECONDS.toMinutes(retrivedTime) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(retrivedTime)));
+                    long cardColor = (long) dataSnapshot.child("singleTimerArrayList").child(Integer.toString(position)).child("color").getValue();
+
+                    title.setText(retrivedTitle);
+                    desc.setText(retrivedDesc);
+                    tvTimerView.setText(totalTimeDisplay);
+                    int colorInteger = (int) cardColor;
+
+                    inputViewColor.setBackgroundColor(ContextCompat.getColor(myDialog.getContext(), colorInteger));
+
+                }
+
+            }
+
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+        //push updated data to db once confirm is hit
+
+//                reference.child(id).setValue(multiTimer)
+        confirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+                    updateAfterEdit(position, title, desc, dialog);
+
+
+
+            }
+        });
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        duration.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                timePicker(tvTimerView);
+            }
+        });
+
+
+
+    }
+
+    private void updateAfterEdit(int position, EditText title, EditText desc, AlertDialog dialog) {
+        singleTimer.get(position).setTitle(title.getText().toString());
+        singleTimer.get(position).setDescription(desc.getText().toString());
+        singleTimer.get(position).setTime(t2Hour * 3600 * 1000 + t2Minute * 60 * 1000);
+
+
+        long updatedTotalTime = 0;
+
+        for (int i = 0; i < singleTimer.size(); i++) {
+            updatedTotalTime = updatedTotalTime + singleTimer.get(i).getTime();
+        }
+
+        multiTimer.setTotalTime(updatedTotalTime);
+
+        //top total time display update
+        TextView totalTimeView = findViewById(R.id.totalTimeView);
+
+        String updatedtotalhm = String.format("%02d hr : %02d min", TimeUnit.MILLISECONDS.toHours(updatedTotalTime),
+                TimeUnit.MILLISECONDS.toMinutes(updatedTotalTime) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(updatedTotalTime)));
+
+        totalTimeView.setText("Total time: " + updatedtotalhm);
+        //--
+
+
+        multiTimer.setSingleTimerArrayList(singleTimer);
+        referenceMultiTimer.setValue(multiTimer);
+
+        mAdapter.notifyDataSetChanged();
+        dialog.dismiss();
     }
 
 
@@ -365,53 +536,7 @@ public class BuildScreenActivity extends AppCompatActivity {
         duration.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                //Initialize time picker dialog
-                TimePickerDialog timePickerDialog = new TimePickerDialog(
-                        BuildScreenActivity.this,
-                        android.R.style.Theme_Holo_Light_Dialog_MinWidth,
-                        new TimePickerDialog.OnTimeSetListener() {
-                            @Override
-                            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                                //Initialize hour and minute
-                                t2Hour = hourOfDay;
-                                t2Minute = minute;
-                                //Store hours and minutes in string
-                                String time = t2Hour + ":" + t2Minute;
-                                //Initialize 24 hours time format
-                                SimpleDateFormat f24Hours = new SimpleDateFormat(
-                                        "HH:mm"
-                                );
-                                try {
-                                    Date date = f24Hours.parse(time);
-                                    //initialize 12 hour time format
-                                    SimpleDateFormat f12Hours = new SimpleDateFormat(
-                                            "HH:mm" //"hh:mm"
-                                    );
-                                    //Set selected time on textview
-                                    long millis = t2Hour*3600*1000 + t2Minute*60*1000;
-                                    String hm = String.format("%02d hr : %02d min", TimeUnit.MILLISECONDS.toHours(millis),
-                                            TimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)));
-                                    tvTimerView.setText(hm); // format 00 hr : 00 min
-
-
-                                }catch(ParseException e){
-                                    e.printStackTrace();
-                                }
-
-
-                            }
-                        },12,0,true
-
-                );
-                timePickerDialog.setTitle("Enter hours and minutes");
-
-
-                timePickerDialog.getWindow().setBackgroundDrawable(new ColorDrawable((Color.TRANSPARENT)));
-//                timePickerDialog.updateTime((int)t2Hour,(int)t2Minute);
-                timePickerDialog.updateTime(0,0);
-
-                timePickerDialog.show();
+                timePicker(tvTimerView);
 
 
             }
@@ -428,9 +553,7 @@ public class BuildScreenActivity extends AppCompatActivity {
 
                 id = reference.push().getKey();
 
-
                 TextView totalTimeView = findViewById(R.id.totalTimeView);
-
 
                 //Cannot leave empty
                 if(TextUtils.isEmpty(mTitle)){
@@ -450,33 +573,38 @@ public class BuildScreenActivity extends AppCompatActivity {
                 }
                 //-----
 
-                //Total time calculation and display on top of screen
-
-
-                totalTime = t2Hour*3600*1000 + t2Minute*60*1000 + totalTime;
-                displayTimeAtTop = totalTime;
-
-                String totalhm = String.format("%02d hr : %02d min", TimeUnit.MILLISECONDS.toHours(displayTimeAtTop),
-                        TimeUnit.MILLISECONDS.toMinutes(displayTimeAtTop) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(displayTimeAtTop)));
-
-                totalTimeView.setText("Total time: " + totalhm);
-
-                //----
 
 
                     //Population
                     singleTimer.add(new SingleTimer(stepNumber,mTitle,mDesc,t2Hour*3600*1000 + t2Minute*60*1000,cardFinalColor));
 
+                    long updatedTotalTime=0;
+
+                for(int i = 0; i<singleTimer.size();i++){
+                    updatedTotalTime = updatedTotalTime + singleTimer.get(i).getTime();
+                }
+
                     multiTimer.setSingleTimerArrayList(singleTimer);
                     multiTimer.setTitle("");
                     multiTimer.setTotalSteps(singleTimer.size());
-                    multiTimer.setTotalTime(totalTime);
+                    multiTimer.setTotalTime(updatedTotalTime);
                     multiTimer.setId(id);
                     String idBackup = id;
 
-                    mAdapter.notifyItemChanged(3);
+//                    mAdapter.notifyItemChanged(3);
+                mAdapter.notifyDataSetChanged();
 
                     //-----
+
+                //Total time calculation and display on top of screen
+
+
+                String totalhm = String.format("%02d hr : %02d min", TimeUnit.MILLISECONDS.toHours(updatedTotalTime),
+                        TimeUnit.MILLISECONDS.toMinutes(updatedTotalTime) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(updatedTotalTime)));
+
+                totalTimeView.setText("Total time: " + totalhm);
+
+                //---
 
                 //create and update multi-timer (db operations)
                 if(multiTimer.getSingleTimerArrayList().size()==1){
@@ -544,7 +672,6 @@ public class BuildScreenActivity extends AppCompatActivity {
                         }
                     });
 
-
                 }
 
                 //-------
@@ -580,16 +707,61 @@ public class BuildScreenActivity extends AppCompatActivity {
                 //----
 
 
-
-
             }
 
         });
 
 
 
+    }
+
+    private void timePicker(final TextView tvTimerView) {
+        //Initialize time picker dialog
+        TimePickerDialog timePickerDialog = new TimePickerDialog(
+                BuildScreenActivity.this,
+                android.R.style.Theme_Holo_Light_Dialog_MinWidth,
+                new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                        //Initialize hour and minute
+                        t2Hour = hourOfDay;
+                        t2Minute = minute;
+                        //Store hours and minutes in string
+                        String time = t2Hour + ":" + t2Minute;
+                        //Initialize 24 hours time format
+                        SimpleDateFormat f24Hours = new SimpleDateFormat(
+                                "HH:mm"
+                        );
+                        try {
+                            Date date = f24Hours.parse(time);
+                            //initialize 12 hour time format
+                            SimpleDateFormat f12Hours = new SimpleDateFormat(
+                                    "HH:mm" //"hh:mm"
+                            );
+                            //Set selected time on textview
+                            long millis = t2Hour*3600*1000 + t2Minute*60*1000;
+                            String hm = String.format("%02d hr : %02d min", TimeUnit.MILLISECONDS.toHours(millis),
+                                    TimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)));
+                            tvTimerView.setText(hm); // format 00 hr : 00 min
 
 
+                        }catch(ParseException e){
+                            e.printStackTrace();
+                        }
+
+
+                    }
+                },12,0,true
+
+        );
+        timePickerDialog.setTitle("Enter hours and minutes");
+
+
+        timePickerDialog.getWindow().setBackgroundDrawable(new ColorDrawable((Color.TRANSPARENT)));
+//                timePickerDialog.updateTime((int)t2Hour,(int)t2Minute);
+        timePickerDialog.updateTime(0,0);
+
+        timePickerDialog.show();
     }
 
 //
