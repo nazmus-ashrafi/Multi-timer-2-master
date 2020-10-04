@@ -84,34 +84,7 @@ public class AdapterTimers extends RecyclerView.Adapter<AdapterTimers.ViewHolder
 
         viewHolder.tvDuration.setText(hm); //reformat to 00:00
 
-        // Remove button functionality
-        final int j = i;
-        viewHolder.btRemove.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-                System.out.println(id);
-                singleTimer.remove(j);
-
-
-                //get firebase
-                //Population
-
-                multiTimer.setSingleTimerArrayList(singleTimer);
-                multiTimer.setTitle("");
-                multiTimer.setTotalSteps(singleTimer.size());
-                multiTimer.setTotalTime(totalTime);
-                multiTimer.setId(id);
-
-                referenceMultiTimer = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child(id);
-//                referenceMultiTimer.child("singleTimerArrayList").child(Integer.toString(j)).setValue(null);
-                System.out.println(position);
-
-                //onScroll listener
-                notifyDataSetChanged();
-
-            }
-        });
     }
 
     @Override
@@ -135,9 +108,9 @@ public class AdapterTimers extends RecyclerView.Adapter<AdapterTimers.ViewHolder
             tvDuration = itemView.findViewById(R.id.tvTimerView);
             imgArticle = itemView.findViewById(R.id.imgArticle);
 
-            //buttons
-            btRemove  = itemView.findViewById(R.id.btRemove);
-            btEdit = itemView.findViewById(R.id.btEdit);
+//            //buttons
+//            btRemove  = itemView.findViewById(R.id.btRemove);
+//            btEdit = itemView.findViewById(R.id.btEdit);
 
         }
 

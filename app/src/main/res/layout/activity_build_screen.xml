@@ -1,124 +1,144 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/relativeLayout3"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:id="@+id/relativeLayout3"
+android:layout_width="match_parent"
+android:layout_height="match_parent">
+
+
+<androidx.recyclerview.widget.RecyclerView
+    android:id="@+id/rvTimers"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    app:layout_constraintBottom_toTopOf="@+id/footer"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.0"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintVertical_bias="1.0" />
+
+<TextView
+    android:id="@+id/empty_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="no_data_available"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.0"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintVertical_bias="0.453" />
+
+<ImageView
+    android:id="@+id/footer"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:scaleType="fitXY"
+    android:src="@drawable/footer"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.0"
+    app:layout_constraintStart_toStartOf="parent" />
+
+<Button
+    android:id="@+id/btnstarttimer"
+    android:layout_width="68dp"
+    android:layout_height="68dp"
+    android:layout_marginBottom="16dp"
+    android:background="@drawable/bt_start"
+    android:onClick="onStartTimerClick"
+    android:stateListAnimator="@null"
+    android:text="Start"
+    android:textColor="#FFFFFF"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.498"
+    app:layout_constraintStart_toStartOf="parent" />
+
+<Button
+    android:id="@+id/btSave"
+    android:layout_width="88dp"
+    android:layout_height="0dp"
+    android:layout_marginEnd="8dp"
+    android:layout_marginBottom="8dp"
+    android:background="@color/bottomNavBar"
+    android:padding="10dp"
+    android:stateListAnimator="@null"
+    android:text="Save"
+    android:textColor="#fafafa"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent" />
+
+<Button
+    android:id="@+id/btAdd"
+    android:layout_width="wrap_content"
+    android:layout_height="0dp"
+    android:layout_marginStart="16dp"
+    android:layout_marginBottom="8dp"
+    android:background="@color/bottomNavBar"
+    android:padding="10dp"
+    android:stateListAnimator="@null"
+    android:text="Add Timer"
+    android:textColor="#fafafa"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintStart_toStartOf="parent" />
+
+<TextView
+    android:id="@+id/totalTimeView"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="50dp"
+    android:text="Total time = 00 hr 00 min"
+    app:layout_constraintBottom_toTopOf="@+id/rvTimers"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent" />
+
+<Button
+    android:id="@+id/removeBtn"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="40dp"
+    android:layout_marginTop="250dp"
+    android:layout_marginBottom="96dp"
+    android:text="Remove"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintStart_toStartOf="@+id/footer"
+    app:layout_constraintTop_toBottomOf="@+id/empty_view"
+
+    android:background="@drawable/bt_ui_readmore"
+    android:paddingLeft="30dp"
+    android:paddingRight="30dp"
+    android:textAllCaps="false"
+    android:textColor="@color/colorBackground"
+    android:textSize="22sp"
+
+    />
 
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvTimers"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintBottom_toTopOf="@+id/footer"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
 
-    <TextView
-        android:id="@+id/empty_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="no_data_available"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.453" />
+<Button
+    android:id="@+id/editBtn"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="28dp"
+    android:layout_marginTop="250dp"
+    android:layout_marginBottom="12dp"
+    android:text="Edit"
+    app:layout_constraintBottom_toTopOf="@+id/btnstarttimer"
+    app:layout_constraintStart_toEndOf="@+id/btnstarttimer"
+    app:layout_constraintTop_toBottomOf="@+id/empty_view"
+    app:layout_constraintVertical_bias="1.0"
 
-    <ImageView
-        android:id="@+id/footer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scaleType="fitXY"
-        android:src="@drawable/footer"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent" />
+    android:background="@drawable/bt_ui_readmore"
+    android:paddingLeft="30dp"
+    android:paddingRight="30dp"
+    android:textAllCaps="false"
+    android:textColor="@color/colorBackground"
+    android:textSize="22sp"
 
-    <Button
-        android:id="@+id/btnstarttimer"
-        android:layout_width="68dp"
-        android:layout_height="68dp"
-        android:layout_marginBottom="16dp"
-        android:background="@drawable/bt_start"
-        android:onClick="onStartTimerClick"
-        android:stateListAnimator="@null"
-        android:text="Start"
-        android:textColor="#FFFFFF"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/btSave"
-        android:layout_width="88dp"
-        android:layout_height="0dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:background="@color/bottomNavBar"
-        android:padding="10dp"
-        android:stateListAnimator="@null"
-        android:text="Save"
-        android:textColor="#fafafa"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <Button
-        android:id="@+id/btAdd"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="8dp"
-        android:background="@color/bottomNavBar"
-        android:padding="10dp"
-        android:stateListAnimator="@null"
-        android:text="Add Timer"
-        android:textColor="#fafafa"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/totalTimeView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:text="Total time = 00 hr 00 min"
-        app:layout_constraintBottom_toTopOf="@+id/rvTimers"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/removeBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="250dp"
-        android:layout_marginBottom="96dp"
-        android:text="Remove"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/footer"
-        app:layout_constraintTop_toBottomOf="@+id/empty_view" />
-
-    <Button
-        android:id="@+id/editBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="28dp"
-        android:layout_marginTop="250dp"
-        android:layout_marginBottom="12dp"
-        android:text="Edit"
-        app:layout_constraintBottom_toTopOf="@+id/btnstarttimer"
-        app:layout_constraintStart_toEndOf="@+id/btnstarttimer"
-        app:layout_constraintTop_toBottomOf="@+id/empty_view"
-        app:layout_constraintVertical_bias="1.0" />
+    />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
