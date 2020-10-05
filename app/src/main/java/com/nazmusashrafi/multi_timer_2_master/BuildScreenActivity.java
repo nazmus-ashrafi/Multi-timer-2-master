@@ -109,6 +109,7 @@ public class BuildScreenActivity extends AppCompatActivity {
 
         //REFERENCE---------
         reference = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimers");
+        id = reference.push().getKey();
 
         //recycler view animation
         recyclerViewAnimation();
@@ -145,12 +146,19 @@ public class BuildScreenActivity extends AppCompatActivity {
                     builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
+
+                            //filling in the title of the multi-timer
                             m_Text = input.getText().toString();
+                            multiTimer.setTitle(m_Text);
+                            reference.child(id).setValue(multiTimer);
+                            //----
 
                             System.out.println("go to run page");
 
+
                             Intent intent;
                             intent = new Intent(BuildScreenActivity.this, RunPageActivity.class);
+                            System.out.println(id);
                             intent.putExtra("id", id);
                             startActivity(intent);
 
@@ -317,6 +325,9 @@ public class BuildScreenActivity extends AppCompatActivity {
             totalTime=0;
             stepNumber=0;
 
+            t2Minute=0;
+            t2Hour=0;
+
         }else if(singleTimer.size()>1){
 
 //                    singleTimer.remove(position);
@@ -360,6 +371,7 @@ public class BuildScreenActivity extends AppCompatActivity {
                 }
             });;
             mAdapter.notifyDataSetChanged();
+
 
         }else{
             Toast.makeText(BuildScreenActivity.this,"Nothing to remove",Toast.LENGTH_LONG).show();
@@ -438,6 +450,7 @@ public class BuildScreenActivity extends AppCompatActivity {
 
             String retrivedTitle;
             final String retrivedId;
+            final long retrivedTime;
 
 
             // get values from db and populate textviews
@@ -470,6 +483,9 @@ public class BuildScreenActivity extends AppCompatActivity {
 
                         inputViewColor.setBackgroundColor(ContextCompat.getColor(myDialog.getContext(), colorInteger));
 
+                        t2Minute = ((retrivedTime / (1000*60)) % 60);
+                        t2Hour   = ((retrivedTime / (1000*60*60)) % 24);
+
                     }
 
                 }
@@ -481,6 +497,13 @@ public class BuildScreenActivity extends AppCompatActivity {
                 }
             });
 
+            duration.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    timePicker(tvTimerView);
+                }
+            });
+
 
             //push updated data to db once confirm is hit
 
@@ -488,6 +511,7 @@ public class BuildScreenActivity extends AppCompatActivity {
             confirm.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+
 
                     updateAfterEdit(position, title, desc, dialog);
 
@@ -501,12 +525,7 @@ public class BuildScreenActivity extends AppCompatActivity {
                 }
             });
 
-            duration.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    timePicker(tvTimerView);
-                }
-            });
+
 
         }
 
@@ -563,7 +582,6 @@ public class BuildScreenActivity extends AppCompatActivity {
         dialog.dismiss();
 
     }
-
 
     private void addTask(){
 
@@ -988,7 +1006,7 @@ public class BuildScreenActivity extends AppCompatActivity {
                 String mTitle = title.getText().toString().trim();
                 String mDesc = desc.getText().toString().trim();
 
-                id = reference.push().getKey();
+//                id = reference.push().getKey();
                 System.out.println("this is id" + id);
 
                 TextView totalTimeView = findViewById(R.id.totalTimeView);
