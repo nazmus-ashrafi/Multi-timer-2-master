@@ -17,6 +17,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -75,6 +76,8 @@ public class BuildScreenActivity extends AppCompatActivity {
     long t2Hour,t2Minute;
 //    private TextView tvTimerView; //display
 
+    private String m_Text = "";
+
 
     public void AdapterTimers(ArrayList<SingleTimer> singleTimer, Context context) {
 
@@ -123,14 +126,51 @@ public class BuildScreenActivity extends AppCompatActivity {
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                System.out.println("go to run page");
 
-                Intent intent;
-                intent = new Intent(BuildScreenActivity.this, RunPageActivity.class);
-                startActivity(intent);
+                if(singleTimer.size()>1){
 
-                //learn how to pass info from one activity to another
-                //pass the onlineUserId,id to the RunPageActivity 
+                    //AlertDialog
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(BuildScreenActivity.this);
+                    builder.setTitle("Set a title for your multi-timer");
+
+
+// Set up the input
+                    final EditText input = new EditText(BuildScreenActivity.this);
+// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+                    input.setInputType(InputType.TYPE_CLASS_TEXT);
+                    builder.setView(input);
+
+// Set up the buttons
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            m_Text = input.getText().toString();
+
+                            System.out.println("go to run page");
+
+                            Intent intent;
+                            intent = new Intent(BuildScreenActivity.this, RunPageActivity.class);
+                            intent.putExtra("id", id);
+                            startActivity(intent);
+
+                            //learn how to pass info from one activity to another
+                            //pass the onlineUserId,id to the RunPageActivity
+                        }
+                    });
+                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+
+                    builder.show();
+
+                }else{
+                    Toast.makeText(BuildScreenActivity.this,"Must have at-least 2 timers",Toast.LENGTH_LONG).show();
+                }
+
             }
         });
 
@@ -302,7 +342,12 @@ public class BuildScreenActivity extends AppCompatActivity {
 
             multiTimer.setTotalTime(updatedTotalTime);
 
-            multiTimer.setId(id);
+
+//            if(singleTimer.size()==1){
+//                multiTimer.setId(id);
+//            }
+
+
             referenceMultiTimer.setValue(multiTimer).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
@@ -345,6 +390,21 @@ public class BuildScreenActivity extends AppCompatActivity {
 
         totalTimeView.setText("Total time: " + updatedtotalhm);
         //--
+
+        //recycler view scrolls to step before deleted step
+
+        rvTimers.post(new Runnable() {
+            @Override
+            public void run() {
+                // Call smooth scroll
+                rvTimers.smoothScrollToPosition(position);
+            }
+        });
+
+        //Bug - make rv scroll from right to left
+
+
+        //----
     }
 
     private void editTask(final int position) {
@@ -455,6 +515,16 @@ public class BuildScreenActivity extends AppCompatActivity {
     }
 
     private void updateAfterEdit(int position, EditText title, EditText desc, AlertDialog dialog) {
+
+        if((t2Hour*3600*1000 + t2Minute*60*1000)==0){
+//                    tvTimerView.setError("Duration cannot be 0");
+
+            Toast.makeText(BuildScreenActivity.this,"Set a duration",Toast.LENGTH_LONG).show();
+            return;
+
+        }
+
+
         singleTimer.get(position).setTitle(title.getText().toString());
         singleTimer.get(position).setDescription(desc.getText().toString());
         singleTimer.get(position).setTime(t2Hour * 3600 * 1000 + t2Minute * 60 * 1000);
@@ -485,7 +555,6 @@ public class BuildScreenActivity extends AppCompatActivity {
                     Toast.makeText(BuildScreenActivity.this,"Multi-timer updated",Toast.LENGTH_LONG).show();
 
                 }
-
 
             }
         });
@@ -533,7 +602,6 @@ public class BuildScreenActivity extends AppCompatActivity {
 
 
         }
-
 
 
     }
@@ -652,7 +720,6 @@ public class BuildScreenActivity extends AppCompatActivity {
                 //-----
 
 
-
                 //Population
 
                 //Add after current step manipulations------------------------
@@ -666,11 +733,14 @@ public class BuildScreenActivity extends AppCompatActivity {
 
 //                singleTimer.add(new SingleTimer('s',mTitle,mDesc,2,2));
 
+
+
                 for(int k=singleTimer.size()-1;k >= position;k--){
                     singleTimer.add(new SingleTimer('6',mTitle,mDesc,2,cardFinalColor));
                     System.out.println(k); //2
                     System.out.println(position); //1
 
+                    singleTimer.get(k+1).setStepNumber(singleTimer.get(k+1).getStepNumber()+1);
                     //3,2
                     singleTimer.set((k+1),singleTimer.get(k));
 
@@ -696,8 +766,14 @@ public class BuildScreenActivity extends AppCompatActivity {
                 multiTimer.setTitle("");
                 multiTimer.setTotalSteps(singleTimer.size());
                 multiTimer.setTotalTime(updatedTotalTime);
-                multiTimer.setId(id);
-                String idBackup = id;
+
+
+                if(singleTimer.size()==1){
+                    multiTimer.setId(id);
+                    String idBackup = id;
+
+                }
+
 
 //                    mAdapter.notifyItemChanged(3);
                 mAdapter.notifyDataSetChanged();
@@ -737,7 +813,6 @@ public class BuildScreenActivity extends AppCompatActivity {
 
 //                                        System.out.println(retrivedArray.toString());
                                     }
-
 
                                 }
 
@@ -805,7 +880,6 @@ public class BuildScreenActivity extends AppCompatActivity {
                     }
                 });
 
-                //DONE
 
                 //----
 
@@ -827,7 +901,6 @@ public class BuildScreenActivity extends AppCompatActivity {
 
     private void addAtEnd() {
         AlertDialog.Builder myDialog = new AlertDialog.Builder(BuildScreenActivity.this,R.style.CustomDialog);
-
 
         LayoutInflater inflater = LayoutInflater.from(BuildScreenActivity.this);
 
@@ -916,6 +989,7 @@ public class BuildScreenActivity extends AppCompatActivity {
                 String mDesc = desc.getText().toString().trim();
 
                 id = reference.push().getKey();
+                System.out.println("this is id" + id);
 
                 TextView totalTimeView = findViewById(R.id.totalTimeView);
 
@@ -924,7 +998,6 @@ public class BuildScreenActivity extends AppCompatActivity {
                     title.setError("Title required");
                     return;
                 }
-
 
 //                System.out.println(tvTimerView.getText().toString());
 
@@ -952,8 +1025,15 @@ public class BuildScreenActivity extends AppCompatActivity {
                 multiTimer.setTitle("");
                 multiTimer.setTotalSteps(singleTimer.size());
                 multiTimer.setTotalTime(updatedTotalTime);
-                multiTimer.setId(id);
-                String idBackup = id;
+
+
+
+                if(singleTimer.size()==1){
+                    multiTimer.setId(id);
+                    String idBackup = id;
+
+                }
+
 
 //                    mAdapter.notifyItemChanged(3);
                 mAdapter.notifyDataSetChanged();
