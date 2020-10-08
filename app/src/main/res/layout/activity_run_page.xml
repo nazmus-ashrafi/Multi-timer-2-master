@@ -7,17 +7,6 @@
     android:layout_height="match_parent">
 
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvTimers"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintBottom_toTopOf="@+id/footer"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
-
     <!--    <TextView-->
     <!--        android:id="@+id/empty_view"-->
     <!--        android:layout_width="match_parent"-->
@@ -29,6 +18,19 @@
     <!--        app:layout_constraintStart_toStartOf="parent"-->
     <!--        app:layout_constraintTop_toTopOf="parent"-->
     <!--        app:layout_constraintVertical_bias="0.453" />-->
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvTimers"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="180dp"
+        android:layout_marginBottom="120dp"
+        app:layout_constraintBottom_toTopOf="@+id/footer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
     <ImageView
         android:id="@+id/footer"
@@ -43,7 +45,7 @@
 
 
     <Button
-        android:id="@+id/btAddTimerRun"
+        android:id="@+id/btReset"
         android:layout_width="100dp"
         android:layout_height="0dp"
         android:layout_marginEnd="8dp"
@@ -51,7 +53,7 @@
         android:background="@color/bottomNavBar"
         android:padding="10dp"
         android:stateListAnimator="@null"
-        android:text="Add timer"
+        android:text="Reset"
         android:textColor="#fafafa"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -74,37 +76,64 @@
         android:id="@+id/totalTimeView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="210dp"
         android:text="Total time = 00 hr 00 min"
         app:layout_constraintBottom_toTopOf="@+id/rvTimers"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!--    <Button-->
-    <!--        android:id="@+id/editBtnRun"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_marginStart="288dp"-->
-    <!--        android:layout_marginTop="260dp"-->
-    <!--        android:layout_marginBottom="96dp"-->
-    <!--        android:text="Edit"-->
-    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--        app:layout_constraintStart_toStartOf="@+id/footer"-->
-    <!--        app:layout_constraintTop_toBottomOf="@+id/empty_view"-->
-    <!--        app:layout_constraintVertical_bias="0.0"-->
-
-    <!--        android:background="@drawable/bt_ui_readmore"-->
-    <!--        android:paddingLeft="30dp"-->
-    <!--        android:paddingRight="30dp"-->
-    <!--        android:textAllCaps="false"-->
-    <!--        android:textColor="@color/colorBackground"-->
-    <!--        android:textSize="22sp"-->
-
-    <!--        />-->
 
     <Button
-        android:id="@+id/btnplaytimer"
+        android:id="@+id/resetStepBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="264dp"
+        android:layout_marginTop="260dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="92dp"
+        android:background="@drawable/bt_ui_readmore"
+        android:paddingLeft="30dp"
+        android:paddingRight="30dp"
+        android:text="Reset Step"
+
+        android:textAllCaps="false"
+        android:textColor="@color/colorBackground"
+        android:textSize="22sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+
+        app:layout_constraintStart_toEndOf="@+id/btReset"
+        app:layout_constraintStart_toStartOf="@+id/footer"
+        app:layout_constraintTop_toBottomOf="@+id/empty_view"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Button
+        android:id="@+id/btSkip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginBottom="92dp"
+
+        android:background="@drawable/bt_ui_readmore"
+        android:paddingLeft="30dp"
+        android:paddingRight="30dp"
+
+        android:text="Skip"
+        android:textAllCaps="false"
+        android:textColor="@color/colorBackground"
+        android:textSize="22sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/resetStepBtn"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rvTimers"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <Button
+        android:id="@+id/btnPlayTimer"
         android:layout_width="68dp"
         android:layout_height="68dp"
         android:layout_marginBottom="16dp"
@@ -118,65 +147,42 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <Button
-        android:id="@+id/skipBtnRun"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="38dp"
-        android:background="@drawable/bt_ui_readmore"
-        android:paddingLeft="30dp"
-        android:paddingRight="30dp"
-
-        android:text="Skip"
-        android:textAllCaps="false"
-        android:textColor="@color/colorBackground"
-
-        android:textSize="22sp"
-        app:layout_constraintBottom_toTopOf="@+id/footer"
+    <com.github.mikephil.charting.charts.PieChart
+        android:id="@+id/pieChart"
+        android:layout_width="175sp"
+        android:layout_height="175sp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
+        app:layout_constraintBottom_toTopOf="@+id/totalTimeView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/btnRemoveRun"
+    <ProgressBar
+        android:id="@+id/timerProgress"
+        android:layout_width="175sp"
+        android:layout_height="175sp"
+        android:indeterminateOnly="false"
+        android:progress="60"
+        android:progressDrawable="@drawable/circle"
+
+        app:layout_constraintBottom_toTopOf="@+id/rvTimers"
+        app:layout_constraintEnd_toStartOf="@+id/pieChart"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <TextView
+        android:id="@+id/countdown_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="25dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="25dp"
-        android:text="Remove"
-        app:layout_constraintBottom_toTopOf="@+id/footer"
-        app:layout_constraintEnd_toStartOf="@+id/skipBtnRun"
-        app:layout_constraintStart_toStartOf="parent"
-
-        android:textAllCaps="false"
-        android:textColor="@color/colorBackground"
-        android:textSize="22sp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:background="@drawable/bt_ui_readmore"
-
-    />
-
-<Button
-    android:id="@+id/btnEditRun"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginStart="32dp"
-    android:layout_marginEnd="30dp"
-    android:layout_marginBottom="27dp"
-    android:text="Edit"
-    app:layout_constraintBottom_toTopOf="@+id/footer"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toEndOf="@+id/skipBtnRun"
-
-    android:textAllCaps="false"
-    android:textColor="@color/colorBackground"
-    android:textSize="22sp"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp"
-    android:background="@drawable/bt_ui_readmore"
-
-    />
+        android:layout_marginTop="24dp"
+        android:text="00:00:00"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/timerProgress"
+        app:layout_constraintEnd_toEndOf="@+id/timerProgress"
+        app:layout_constraintStart_toStartOf="@+id/timerProgress"
+        app:layout_constraintTop_toTopOf="@+id/timerProgress" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

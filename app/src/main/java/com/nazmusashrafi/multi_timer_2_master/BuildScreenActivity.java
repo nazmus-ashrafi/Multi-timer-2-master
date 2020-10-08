@@ -96,7 +96,7 @@ public class BuildScreenActivity extends AppCompatActivity {
 
 
         //Buttons and text view declaration
-        Button addTimer = (Button) findViewById(R.id.btAdd);
+        Button addTimer = (Button) findViewById(R.id.btReset);
         Button startBtn = findViewById(R.id.btnstarttimer);
         TextView emptyView = (TextView) findViewById(R.id.empty_view);
         Button saveBtn = findViewById(R.id.btSave);
@@ -819,32 +819,35 @@ public class BuildScreenActivity extends AppCompatActivity {
 
                             }
 
-                            //REFERENCE---------
-                            referenceMultiTimer = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimers").child(multiTimer.getId());
+//                            //REFERENCE---------
+//                            referenceMultiTimer = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimers").child(multiTimer.getId());
 
-                            //optional check
-                            referenceMultiTimer.addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    if((ArrayList<SingleTimer>) dataSnapshot.child("singleTimerArrayList").getValue()!=null){
-                                        ArrayList<SingleTimer> retrivedArray = (ArrayList<SingleTimer>) dataSnapshot.child("singleTimerArrayList").getValue();
-
-//                                        System.out.println(retrivedArray.toString());
-                                    }
-
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                }
-                            });
+//                            //optional check
+//                            referenceMultiTimer.addValueEventListener(new ValueEventListener() {
+//                                @Override
+//                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                                    if((ArrayList<SingleTimer>) dataSnapshot.child("singleTimerArrayList").getValue()!=null){
+//                                        ArrayList<SingleTimer> retrivedArray = (ArrayList<SingleTimer>) dataSnapshot.child("singleTimerArrayList").getValue();
+//
+////                                        System.out.println(retrivedArray.toString());
+//                                    }
+//
+//                                }
+//
+//                                @Override
+//                                public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                                }
+//                            });
 
                         }
                     });
 
 
                 }else{
+
+                    //REFERENCE---------
+                    referenceMultiTimer = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimers").child(multiTimer.getId());
 
 
                     //update multitimer
@@ -1079,35 +1082,38 @@ public class BuildScreenActivity extends AppCompatActivity {
 
                             }
 
-                            //REFERENCE---------
-                            referenceMultiTimer = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimers").child(multiTimer.getId());
+//                            //REFERENCE---------
+//                            referenceMultiTimer = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimers").child(multiTimer.getId());
 
-                            //optional check
-                            referenceMultiTimer.addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    if((ArrayList<SingleTimer>) dataSnapshot.child("singleTimerArrayList").getValue()!=null){
-                                        ArrayList<SingleTimer> retrivedArray = (ArrayList<SingleTimer>) dataSnapshot.child("singleTimerArrayList").getValue();
-
-//                                        System.out.println(retrivedArray.toString());
-                                    }
-
-
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                }
-                            });
+//                            //optional check
+//                            referenceMultiTimer.addValueEventListener(new ValueEventListener() {
+//                                @Override
+//                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                                    if((ArrayList<SingleTimer>) dataSnapshot.child("singleTimerArrayList").getValue()!=null){
+//                                        ArrayList<SingleTimer> retrivedArray = (ArrayList<SingleTimer>) dataSnapshot.child("singleTimerArrayList").getValue();
+//
+////                                        System.out.println(retrivedArray.toString());
+//                                    }
+//
+//
+//                                }
+//
+//                                @Override
+//                                public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                                }
+//                            });
 
                         }
                     });
 
 
                 }else{
+                    //REFERENCE---------
+                    referenceMultiTimer = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimers").child(multiTimer.getId());
+
                     //update multitimer
-                    referenceMultiTimer.setValue(multiTimer).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    referenceMultiTimer.setValue(multiTimer).addOnCompleteListener(new OnCompleteListener<Void>() { //BUGGY
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if(task.isSuccessful()){
