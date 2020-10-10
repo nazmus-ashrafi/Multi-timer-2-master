@@ -151,20 +151,36 @@
         android:id="@+id/pieChart"
         android:layout_width="175sp"
         android:layout_height="175sp"
-        android:layout_marginEnd="24dp"
+        android:layout_marginEnd="22dp"
         android:layout_marginBottom="24dp"
         app:layout_constraintBottom_toTopOf="@+id/totalTimeView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+<!--    <ProgressBar-->
+<!--        android:id="@+id/timerProgress"-->
+<!--        android:layout_width="175sp"-->
+<!--        android:layout_height="175sp"-->
+<!--        android:layout_marginStart="23dp"-->
+<!--        android:visibility="visible"-->
+<!--        android:progress="100"-->
+
+<!--        android:indeterminateDrawable="@drawable/circle"-->
+<!--        app:layout_constraintBottom_toTopOf="@+id/rvTimers"-->
+<!--        app:layout_constraintEnd_toStartOf="@+id/pieChart"-->
+<!--        app:layout_constraintHorizontal_bias="0.0"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:layout_constraintVertical_bias="1.0" />-->
+
     <ProgressBar
         android:id="@+id/timerProgress"
         android:layout_width="175sp"
         android:layout_height="175sp"
+        android:layout_marginStart="23dp"
         android:indeterminateOnly="false"
-        android:progress="60"
+        android:progress="100"
         android:progressDrawable="@drawable/circle"
-
         app:layout_constraintBottom_toTopOf="@+id/rvTimers"
         app:layout_constraintEnd_toStartOf="@+id/pieChart"
         app:layout_constraintHorizontal_bias="0.0"
@@ -173,16 +189,33 @@
         app:layout_constraintVertical_bias="1.0" />
 
     <TextView
-        android:id="@+id/countdown_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    android:id="@+id/countdown_text"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="24dp"
+    android:text="00:00:00"
+    android:textSize="20sp"
+    app:layout_constraintBottom_toBottomOf="@+id/timerProgress"
+    app:layout_constraintEnd_toEndOf="@+id/timerProgress"
+    app:layout_constraintStart_toStartOf="@+id/timerProgress"
+    app:layout_constraintTop_toTopOf="@+id/timerProgress" />
+
+    <TextView
+        android:id="@+id/countdown_steps"
+        android:layout_width="65dp"
+        android:layout_height="32dp"
+        android:layout_marginStart="10dp"
         android:layout_marginTop="24dp"
-        android:text="00:00:00"
-        android:textSize="20sp"
+        android:layout_marginBottom="52dp"
+        android:fontFamily="@font/caveat_bold"
+        android:text="Step 1"
+        android:textSize="25sp"
         app:layout_constraintBottom_toBottomOf="@+id/timerProgress"
         app:layout_constraintEnd_toEndOf="@+id/timerProgress"
+        app:layout_constraintHorizontal_bias="0.436"
         app:layout_constraintStart_toStartOf="@+id/timerProgress"
-        app:layout_constraintTop_toTopOf="@+id/timerProgress" />
+        app:layout_constraintTop_toTopOf="@+id/timerProgress"
+        app:layout_constraintVertical_bias="0.447" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,22 +1,28 @@
 package com.nazmusashrafi.multi_timer_2_master;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
@@ -55,14 +61,16 @@ public class RunPageActivity extends AppCompatActivity {
     private TextView countdownText;
     private Button countdownButton;
     private Button resetMultiTimerButton;
+    private Button skipButton;
+    private  Button resetStepButton;
     private CountDownTimer countDownTimer;
+    private ProgressBar timerProgress;
+    private  TextView ringStepNumber;
     private long totalStepTime = 0;
     private boolean timerRunning;
     private long timeLeft;
 
     private boolean timerStarted = false;
-
-
 
     //Firebase variables
     private DatabaseReference reference;
@@ -80,9 +88,12 @@ public class RunPageActivity extends AppCompatActivity {
     // Uni vars
     ArrayList<Long> timesUni = new ArrayList<>();
     ArrayList<Long> colorUni = new ArrayList<>();
+    ArrayList<Long> stepNumberUni = new ArrayList<>();
+
+    long timeAtPaused = 0;
 
     int counter =0;
-    long millis =0 ;
+    long millis =0;
 
 
 
@@ -106,9 +117,14 @@ public class RunPageActivity extends AppCompatActivity {
         System.out.println(id);
         idUni = id;
 
-        //initialize timer variables
+        //initialize timer components
         countdownText = findViewById(R.id.countdown_text);
-        countdownButton = findViewById(R.id.btnPlayTimer);
+        countdownButton = findViewById(R.id.btnPlayTimer); //play/pause button
+        timerProgress = findViewById(R.id.timerProgress);
+        ringStepNumber = findViewById(R.id.countdown_steps);
+
+        skipButton = findViewById(R.id.btSkip);
+        resetStepButton = findViewById(R.id.btSkip);
         resetMultiTimerButton = findViewById(R.id.btReset);
 
 
@@ -130,22 +146,32 @@ public class RunPageActivity extends AppCompatActivity {
             }
         });
 
-
+        //play/pause button
         countdownButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(timerRunning){
+//
+//                    timeAtPaused =  timeAtPaused + (100-((timeLeft*100)/timesUni.get(counter)));
+//
+////                    100-((timeLeft*100)/timeLeftLong))
+
 
                     pauseTimer();
 
                 }else{
                     if(!timerStarted){
+
                         timerStarted= true;
                         startTimer(timesUni.get(0));
 //                    startTimer();
 
                     }else{
+
                         startTimer(millis);
+
+
+
                     }
 
 
@@ -153,7 +179,72 @@ public class RunPageActivity extends AppCompatActivity {
             }
         });
 
+        //skip button
+        skipButton.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
+            @Override
+            public void onClick(View view) {
 
+                if(timesUni.size()==counter+1){
+                    Toast.makeText(RunPageActivity.this,"Step "+(stepNumberUni.get(counter))+" skipped",Toast.LENGTH_LONG).show();
+
+                    countDownTimer.cancel();
+                    timerRunning = false;
+                    timerProgress.setVisibility(View.INVISIBLE);
+                    countdownButton.setText("Done");
+                    countdownButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            System.out.println("Back to homepage");
+                        }
+                    });
+
+
+
+                }else{
+                    if(countDownTimer!=null){
+
+                        countDownTimer.cancel();
+                        timerRunning = false;
+                        countdownButton.setText("Start");
+
+                        //change step number, ring color, recycler view, toast
+                        //change ring color
+                        colorSetter(counter+1);
+
+                        //change step number in ring
+                        ringStepNumber.setText("Step " + stepNumberUni.get(counter+1).toString());
+
+                        //move recycler view to next position
+                        rvTimers.smoothScrollToPosition(Math.toIntExact(stepNumberUni.get(counter)));
+
+                        //toast
+                        Toast.makeText(RunPageActivity.this,"Step "+(stepNumberUni.get(counter))+" skipped",Toast.LENGTH_LONG).show();
+
+                        counter++;
+
+                        //----------
+
+                        startTimer(timesUni.get(counter));
+
+                    }else{
+                        Toast.makeText(RunPageActivity.this,"Can't skip if not started",Toast.LENGTH_LONG).show();
+                    }
+
+
+                }
+
+
+            }
+        });
+
+        //reset step
+
+        //reset full timer
+
+
+
+        //db ops
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -179,7 +270,7 @@ public class RunPageActivity extends AppCompatActivity {
 
                     }
 
-                    //displays step 1 time initially in the circle
+                    //displays step 1 time initially in the circle-------
 
                     for(int j=0;j<times.size();j++){
                         totalTime = totalTime + times.get(j);
@@ -199,11 +290,19 @@ public class RunPageActivity extends AppCompatActivity {
                     //fill uni vars
                     timesUni.addAll(times);
                     colorUni.addAll(color);
+                    stepNumberUni.addAll(stepNumber);
+
+                    //set color for ring initially
+                    colorSetter(0);
 
 
-                    System.out.println(singleTimer.toString());
 
-                                        System.out.println(retrivedArray.toString());
+                    //------- -- ----
+
+
+//                    System.out.println(singleTimer.toString());
+//
+//                                        System.out.println(retrivedArray.toString());
 
                     //Pie chart
                     pieChartInitiater(times,titles,color);
@@ -234,6 +333,31 @@ public class RunPageActivity extends AppCompatActivity {
         });
 
 
+    }
+
+
+    private void colorSetter(int number) {
+        if(colorUni.get(number) == 2131034166 ) {
+            timerProgress.setProgressDrawable(getDrawable(R.drawable.circleteal));
+        }else if(colorUni.get(number) == 2131034158 ){
+            timerProgress.setProgressDrawable(getDrawable(R.drawable.circle)); //cream
+        }else if(colorUni.get(number) == 2131034159 ){
+            timerProgress.setProgressDrawable(getDrawable(R.drawable.circlegrape));
+        }else if(colorUni.get(number) == 2131034164 ){
+            timerProgress.setProgressDrawable(getDrawable(R.drawable.circlepurple)); //
+        }else if(colorUni.get(number) == 2131034162 ){
+            timerProgress.setProgressDrawable(getDrawable(R.drawable.circleindigo));
+        }else if(colorUni.get(number) == 2131034167 ){
+            timerProgress.setProgressDrawable(getDrawable(R.drawable.circleyellow));
+        }else if(colorUni.get(number) == 2131034160 ){
+            timerProgress.setProgressDrawable(getDrawable(R.drawable.circlegreen));
+        }else if(colorUni.get(number) == 2131034163 ){
+            timerProgress.setProgressDrawable(getDrawable(R.drawable.circlepink));
+        }else if(colorUni.get(number) == 2131034165 ){
+            timerProgress.setProgressDrawable(getDrawable(R.drawable.circleskyblue));
+        }else if(colorUni.get(number) == 2131034156 ){
+            timerProgress.setProgressDrawable(getDrawable(R.drawable.circleblue));
+        }
     }
 
     public void recyclerViewAnimation() {
@@ -278,6 +402,28 @@ public class RunPageActivity extends AppCompatActivity {
             }
         },100);
 
+        // bug fix for null v
+
+        View v = snapHelper.findSnapView(layoutManager);
+
+        if(v==null){
+//            finish();
+//            startActivity(getIntent());
+
+            System.out.println("boohoo");
+
+//            Intent intent = new Intent(this, RunPageActivity.class);
+//            intent.putExtra("id", idUni);
+//            startActivity(intent);
+            mAdapter = new AdapterTimers(singleTimer,idUni,position,totalTime,this);
+            rvTimers.setAdapter(mAdapter);
+
+        }
+
+
+        //send to save and run from there
+        //-------------
+
 
         // card zoom in on scroll animation
         rvTimers.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -287,9 +433,11 @@ public class RunPageActivity extends AppCompatActivity {
 
                 View v = snapHelper.findSnapView(layoutManager);
 
-                if(!singleTimer.isEmpty()){
-                    if(v!=null){
-                        int pos = layoutManager.getPosition(v); // BUG --FIX at build page at on press start
+
+
+                if(!singleTimer.isEmpty() && v!=null){
+
+                        int pos = layoutManager.getPosition(v); // BUG ??
                         position = pos;
 //                    System.out.println(position);
 
@@ -302,14 +450,26 @@ public class RunPageActivity extends AppCompatActivity {
                             rl1.animate().setDuration(350).scaleX(0.6f).scaleY(0.6f).setInterpolator(new AccelerateInterpolator()).start();
                         }
 
+                }else{
+                    System.out.println("hit");
+
+                    final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(context,RecyclerView.HORIZONTAL,false);
+                    final SnapHelper snapHelper = new LinearSnapHelper();
+
+                    View w = snapHelper.findSnapView(layoutManager);
+
+                    int pos = layoutManager.getPosition(w); // BUG ??
+                    position = pos;
+//                    System.out.println(position);
+
+                    RecyclerView.ViewHolder viewHolder = rvTimers.findViewHolderForAdapterPosition(pos);
+                    ScrollView rl1 = viewHolder.itemView.findViewById(R.id.rl1);
+
+                    if(newState == RecyclerView.SCROLL_STATE_IDLE){
+                        rl1.animate().setDuration(350).scaleX(0.8f).scaleY(0.8f).setInterpolator(new AccelerateInterpolator()).start();
                     }else{
-                        System.out.println("v is null");
-                        //push to build page - BUG
-
-                        System.out.println(singleTimer.get(0).getTitle());
-
+                        rl1.animate().setDuration(350).scaleX(0.6f).scaleY(0.6f).setInterpolator(new AccelerateInterpolator()).start();
                     }
-
 
                 }
 
@@ -325,16 +485,6 @@ public class RunPageActivity extends AppCompatActivity {
 
         //end of recyclerview animation
 
-        // remove button functionality
-
-        Button skipButton = (Button) findViewById(R.id.btSkip);
-
-        skipButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                System.out.println("Skip step");
-            }
-        });
 
 
     }
@@ -452,9 +602,11 @@ public class RunPageActivity extends AppCompatActivity {
 //
 //    }
 
-    private void startTimer(long timeLeftLong) {
+    private void startTimer(final long timeLeftLong) {
 
         timeLeft= timeLeftLong;
+
+        timerProgress.setVisibility(View.VISIBLE);
 
         countDownTimer = new CountDownTimer(timeLeft,1000) { //1000
 
@@ -466,23 +618,52 @@ public class RunPageActivity extends AppCompatActivity {
                 updateCountDownText(); //change this
 
 //                  System.out.println("Bing");
+
+                //progress circle
+//                timerProgress.setProgress((int) ((100-(timeAtPaused+(timeLeft*100)/timeLeftLong)))); //100-80=20
+
+
+
+                timerProgress.setProgress((int) ((100-((timeLeft*100)/timeLeftLong)))); //works
+
+
+
+
             }
 
+            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onFinish() {
                 counter++;
+
+                timerProgress.setVisibility(View.INVISIBLE);
 
                 if(counter<timesUni.size()){
                     System.out.println("Bing");
                     //bell, move recyclerview ,change ring color,change (step 1) text in ring
                     // redo lower button placement
 
-                    startTimer(timesUni.get(counter)); // recursion
+                    //change ring color
+                    colorSetter(counter);
+
+                    //change step number in ring
+                    ringStepNumber.setText("Step " + stepNumberUni.get(counter).toString());
+
+                    //move recycler view
+                    rvTimers.smoothScrollToPosition(Math.toIntExact(stepNumberUni.get(counter)-1));
+
+
+
+                    //
+                    startTimer(timesUni.get(counter)); // recursion to start next step
 
                 }
 
                 if(counter == timesUni.size()){
                     System.out.println("Bing Ping");
+
+                    //
+                    timerProgress.setProgress(100);
 
                     //
                     timerRunning = false;
@@ -526,6 +707,10 @@ public class RunPageActivity extends AppCompatActivity {
     }
 
     private void pauseTimer(){
+
+        timerProgress.setVisibility(View.INVISIBLE);
+
+
         countDownTimer.cancel();
         timerRunning = false;
         countdownButton.setText("Start");
@@ -533,6 +718,10 @@ public class RunPageActivity extends AppCompatActivity {
 
 
     }
+
+//    private void updateprogressBar(){
+//        timerProgress.setProgress(timeLeft);
+//    }
 
 //    private void resetTimer(){
 //        countDownTimer.cancel();
@@ -604,11 +793,7 @@ public class RunPageActivity extends AppCompatActivity {
         pieChart.setRotation(position);
 
 
-
     }
-
-
-
 
 
 }
