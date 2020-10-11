@@ -18,13 +18,16 @@
     <color name="bottomNavBar">#71A6E8</color>
     <color name="bottomStartButton">#D6749F</color>
 
-    //
+    //Footer color
+    <color name="footerBlue">#71A6E8</color>
+
+    //Heavy colors
 
     <color name="cardColorBlueH">#B5CEF2</color>
     <color name="cardColorCreamH">#EFE3CB</color>
     <color name="cardColorIndigoH">#D0D4EA</color>
 
-    //card colors
+    //card colors (light colors)
     <color name="cardColorBlueL">#C1D5F2</color>
     <color name="cardColorCreamL">#F0E9DA</color>
     <color name="cardColorIndigoL">#E3E4EA</color>

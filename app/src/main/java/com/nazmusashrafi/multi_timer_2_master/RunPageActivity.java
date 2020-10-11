@@ -3,15 +3,19 @@ package com.nazmusashrafi.multi_timer_2_master;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -20,10 +24,12 @@ import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
@@ -39,6 +45,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.Objects;
 
 public class RunPageActivity extends AppCompatActivity {
 
@@ -69,6 +76,7 @@ public class RunPageActivity extends AppCompatActivity {
     private long totalStepTime = 0;
     private boolean timerRunning;
     private long timeLeft;
+    private Dialog customDialog;
 
     private boolean timerStarted = false;
 
@@ -97,6 +105,7 @@ public class RunPageActivity extends AppCompatActivity {
 
 
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -124,15 +133,18 @@ public class RunPageActivity extends AppCompatActivity {
         ringStepNumber = findViewById(R.id.countdown_steps);
 
         skipButton = findViewById(R.id.btSkip);
-        resetStepButton = findViewById(R.id.btSkip);
+        resetStepButton = findViewById(R.id.resetStepBtn);
         resetMultiTimerButton = findViewById(R.id.btReset);
+
+        customDialog = new Dialog(this);
 
 
         //REFERENCE---------
         reference = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimers").child(id);
 
-//        recycler view animation
+        //        recycler view animation
         recyclerViewAnimation();
+
 
         reference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -151,7 +163,7 @@ public class RunPageActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(timerRunning){
-//
+
 //                    timeAtPaused =  timeAtPaused + (100-((timeLeft*100)/timesUni.get(counter)));
 //
 ////                    100-((timeLeft*100)/timeLeftLong))
@@ -199,6 +211,16 @@ public class RunPageActivity extends AppCompatActivity {
                         }
                     });
 
+                    //stuff that happens after multi-timer finishes
+                    resetStepButton.setVisibility(View.INVISIBLE);
+                    skipButton.setVisibility(View.INVISIBLE);
+                    Toast.makeText(RunPageActivity.this,"Activity completed",Toast.LENGTH_LONG).show();
+
+                    openCustomDialog();
+
+//
+
+
 
 
                 }else{
@@ -231,16 +253,97 @@ public class RunPageActivity extends AppCompatActivity {
                         Toast.makeText(RunPageActivity.this,"Can't skip if not started",Toast.LENGTH_LONG).show();
                     }
 
-
                 }
-
 
             }
         });
 
         //reset step
 
+        resetStepButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(timesUni.size()==counter+1){
+                    Toast.makeText(RunPageActivity.this,"Step "+(stepNumberUni.get(counter))+" reset",Toast.LENGTH_LONG).show();
+
+                    countDownTimer.cancel();
+                    timerRunning = false;
+                    startTimer(timesUni.get(counter));
+
+                }else{
+                    if(countDownTimer!=null){
+
+                        countDownTimer.cancel();
+                        timerRunning = false;
+                        countdownButton.setText("Start");
+
+                        //toast
+                        Toast.makeText(RunPageActivity.this,"Step "+(stepNumberUni.get(counter))+" reset",Toast.LENGTH_LONG).show();
+
+                        //----------
+
+                        startTimer(timesUni.get(counter));
+
+                    }else{
+                        Toast.makeText(RunPageActivity.this,"Can't reset if not started",Toast.LENGTH_LONG).show();
+                    }
+
+
+                }
+
+            }
+        });
+
         //reset full timer
+
+        resetMultiTimerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //popup are you sure
+
+//                if(timesUni.size()==counter+1){
+//                    Toast.makeText(RunPageActivity.this,"Step "+(stepNumberUni.get(counter))+" reset",Toast.LENGTH_LONG).show();
+//
+//                    countDownTimer.cancel();
+//                    timerRunning = false;
+//
+//                    //
+//                    counter=0;
+//                    startTimer(timesUni.get(0));
+//
+//
+//
+//                }else{
+//                    if(countDownTimer!=null){
+//
+//                        countDownTimer.cancel();
+//                        timerRunning = false;
+//                        countdownButton.setText("Start");
+//
+//                        //toast
+//                        Toast.makeText(RunPageActivity.this,"Step "+(stepNumberUni.get(counter))+" reset",Toast.LENGTH_LONG).show();
+//
+//                        //----------
+//
+//                        //
+//                        counter=0;
+//                        startTimer(timesUni.get(0));
+//
+//                    }else{
+//                        Toast.makeText(RunPageActivity.this,"Can't reset if not started",Toast.LENGTH_LONG).show();
+//                    }
+//
+//
+//                }
+
+                //ask if sure or not
+
+                Intent intent = new Intent(getApplicationContext(), RunPageActivity.class);
+            intent.putExtra("id", idUni);
+            startActivity(intent);
+
+            }
+        });
 
 
 
@@ -307,6 +410,8 @@ public class RunPageActivity extends AppCompatActivity {
                     //Pie chart
                     pieChartInitiater(times,titles,color);
 
+
+
                     //
 
 //                    Map<String, SingleTimer> td = new HashMap<String, SingleTimer>();
@@ -331,6 +436,9 @@ public class RunPageActivity extends AppCompatActivity {
 
             }
         });
+
+
+
 
 
     }
@@ -360,6 +468,7 @@ public class RunPageActivity extends AppCompatActivity {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public void recyclerViewAnimation() {
         //start of recycler view animation
 
@@ -402,27 +511,34 @@ public class RunPageActivity extends AppCompatActivity {
             }
         },100);
 
-        // bug fix for null v
-
-        View v = snapHelper.findSnapView(layoutManager);
-
-        if(v==null){
-//            finish();
-//            startActivity(getIntent());
-
-            System.out.println("boohoo");
-
-//            Intent intent = new Intent(this, RunPageActivity.class);
-//            intent.putExtra("id", idUni);
-//            startActivity(intent);
-            mAdapter = new AdapterTimers(singleTimer,idUni,position,totalTime,this);
-            rvTimers.setAdapter(mAdapter);
-
-        }
-
 
         //send to save and run from there
         //-------------
+
+        //bug fix for null v
+
+        rvTimers.post(new Runnable() {
+            @Override
+            public void run() {
+                rvTimers.scrollToPosition(0);
+                // Here adapter.getItemCount()== child count
+
+            }
+        });
+
+        //
+
+        pieChart = (PieChart) findViewById(R.id.pieChart);
+        pieChart.setNoDataText("Tap to show chart");
+        Paint p = pieChart.getPaint(Chart.PAINT_INFO);
+        p.setColor(ContextCompat.getColor(this,
+                R.color.footerBlue));
+
+        p.setTextSize(45);
+//        p.setTypeface(...);
+
+        //---- ---------- --------
+
 
 
         // card zoom in on scroll animation
@@ -433,10 +549,26 @@ public class RunPageActivity extends AppCompatActivity {
 
                 View v = snapHelper.findSnapView(layoutManager);
 
+//                if(v==null){
+////            finish();
+////            startActivity(getIntent());
+//
+//                    System.out.println("boohoo");
+//
+////            Intent intent = new Intent(this, RunPageActivity.class);
+////            intent.putExtra("id", idUni);
+////            startActivity(intent);
+//
+//                    mAdapter.notifyDataSetChanged();
+//
+//                }
+
+                if(!singleTimer.isEmpty() ) {
+
+                    if (v != null) {
 
 
-                if(!singleTimer.isEmpty() && v!=null){
-
+                        System.out.println(" v not null");
                         int pos = layoutManager.getPosition(v); // BUG ??
                         position = pos;
 //                    System.out.println(position);
@@ -444,40 +576,38 @@ public class RunPageActivity extends AppCompatActivity {
                         RecyclerView.ViewHolder viewHolder = rvTimers.findViewHolderForAdapterPosition(pos);
                         ScrollView rl1 = viewHolder.itemView.findViewById(R.id.rl1);
 
-                        if(newState == RecyclerView.SCROLL_STATE_IDLE){
+                        if (newState == RecyclerView.SCROLL_STATE_IDLE) {
                             rl1.animate().setDuration(350).scaleX(0.8f).scaleY(0.8f).setInterpolator(new AccelerateInterpolator()).start();
-                        }else{
+                        } else {
                             rl1.animate().setDuration(350).scaleX(0.6f).scaleY(0.6f).setInterpolator(new AccelerateInterpolator()).start();
                         }
+                    } else {
+                        System.out.println("v is null");
 
-                }else{
-                    System.out.println("hit");
+                        //reset step, reset, save page --
 
-                    final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(context,RecyclerView.HORIZONTAL,false);
-                    final SnapHelper snapHelper = new LinearSnapHelper();
+                        //
+//                        Intent intent;
+//                        intent = new Intent(RunPageActivity.this, RunPageActivity.class);
+//                        System.out.println(idUni);
+//                        intent.putExtra("id", idUni);
+////                            intent.putExtra("view",layoutManager)
+//                        startActivity(intent);
 
-                    View w = snapHelper.findSnapView(layoutManager);
+                        mAdapter.notifyDataSetChanged();
 
-                    int pos = layoutManager.getPosition(w); // BUG ??
-                    position = pos;
-//                    System.out.println(position);
 
-                    RecyclerView.ViewHolder viewHolder = rvTimers.findViewHolderForAdapterPosition(pos);
-                    ScrollView rl1 = viewHolder.itemView.findViewById(R.id.rl1);
-
-                    if(newState == RecyclerView.SCROLL_STATE_IDLE){
-                        rl1.animate().setDuration(350).scaleX(0.8f).scaleY(0.8f).setInterpolator(new AccelerateInterpolator()).start();
-                    }else{
-                        rl1.animate().setDuration(350).scaleX(0.6f).scaleY(0.6f).setInterpolator(new AccelerateInterpolator()).start();
                     }
-
                 }
+
+
 
             }
 
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
+
             }
 
 
@@ -627,8 +757,6 @@ public class RunPageActivity extends AppCompatActivity {
                 timerProgress.setProgress((int) ((100-((timeLeft*100)/timeLeftLong)))); //works
 
 
-
-
             }
 
             @RequiresApi(api = Build.VERSION_CODES.N)
@@ -653,7 +781,6 @@ public class RunPageActivity extends AppCompatActivity {
                     rvTimers.smoothScrollToPosition(Math.toIntExact(stepNumberUni.get(counter)-1));
 
 
-
                     //
                     startTimer(timesUni.get(counter)); // recursion to start next step
 
@@ -674,8 +801,23 @@ public class RunPageActivity extends AppCompatActivity {
                             System.out.println("Back to homepage");
                         }
                     });
+
+                    //stuff that happens after multitimer completed
+                    resetStepButton.setVisibility(View.INVISIBLE);
+                    skipButton.setVisibility(View.INVISIBLE);
+                    Toast.makeText(RunPageActivity.this,"Activity completed",Toast.LENGTH_LONG).show();
+
+                    openCustomDialog();
+
+                    //
+
+                    //increase card height programatically?? or a popup dialog??
+
+                    //---
 //                        resetMultiTimerButton.setVisibility((View.VISIBLE));
                 }
+
+
 
 
             }
@@ -791,7 +933,19 @@ public class RunPageActivity extends AppCompatActivity {
 
         pieChart.setData(data);
         pieChart.setRotation(position);
+        pieChart.setRotationX(10);
 
+
+    }
+
+    private void openCustomDialog(){
+        customDialog.setContentView(R.layout.custom_dialog_finish);
+        customDialog.getWindow().setBackgroundDrawable(new ColorDrawable((Color.TRANSPARENT)));
+
+        Button btnReset = customDialog.findViewById(R.id.btReset);
+        Button btnDone = customDialog.findViewById(R.id.btDone);
+
+        customDialog.show();
 
     }
 
