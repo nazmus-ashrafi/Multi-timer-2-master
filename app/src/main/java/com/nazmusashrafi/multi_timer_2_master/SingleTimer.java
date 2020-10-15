@@ -11,6 +11,8 @@ public class SingleTimer implements Serializable {
     private long time;
     private int color;
 
+    public SingleTimer(){}
+
     public SingleTimer(int stepNumber, String title, String description, long time, int color) {
         this.stepNumber = stepNumber;
         this.title = title;

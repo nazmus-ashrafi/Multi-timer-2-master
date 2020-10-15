@@ -38,12 +38,15 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -70,6 +73,7 @@ public class BuildScreenActivity extends AppCompatActivity {
     long displayTimeAtTop;
 
     ArrayList<SingleTimer> singleTimer = new ArrayList<>();
+    ArrayList<MultiTimer> multiTimerArrayListToBeSaved = new ArrayList<>();
     Context context;
     String id;
 
@@ -129,52 +133,8 @@ public class BuildScreenActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 if(singleTimer.size()>1){
+                    alertDialogForTitle();
 
-                    //AlertDialog
-
-                    AlertDialog.Builder builder = new AlertDialog.Builder(BuildScreenActivity.this);
-                    builder.setTitle("Set a title for your multi-timer");
-
-
-// Set up the input
-                    final EditText input = new EditText(BuildScreenActivity.this);
-// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
-                    input.setInputType(InputType.TYPE_CLASS_TEXT);
-                    builder.setView(input);
-
-// Set up the buttons
-                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                            //filling in the title of the multi-timer
-                            m_Text = input.getText().toString();
-                            multiTimer.setTitle(m_Text);
-                            reference.child(id).setValue(multiTimer);
-                            //----
-
-                            System.out.println("go to run page");
-
-
-                            Intent intent;
-                            intent = new Intent(BuildScreenActivity.this, RunPageActivity.class);
-                            System.out.println(id);
-                            intent.putExtra("id", id);
-//                            intent.putExtra("view",layoutManager)
-                            startActivity(intent);
-
-                            //learn how to pass info from one activity to another
-                            //pass the onlineUserId,id to the RunPageActivity
-                        }
-                    });
-                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    });
-
-                    builder.show();
 
                 }else{
                     Toast.makeText(BuildScreenActivity.this,"Must have at-least 2 timers",Toast.LENGTH_LONG).show();
@@ -188,10 +148,170 @@ public class BuildScreenActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 System.out.println("Save timer, go to run page");
+
+                //REFERENCE---------
+                DatabaseReference referenceMultiTimerArraySave = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimer arraylist");
+
+                referenceMultiTimerArraySave.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                        //gets custom array list from db
+                        GenericTypeIndicator<ArrayList<MultiTimer>> t = new GenericTypeIndicator<ArrayList<MultiTimer>>() {};
+
+                        ArrayList<MultiTimer> yourMultitimerArray = dataSnapshot.getValue(t);
+
+                        if(yourMultitimerArray!=null){
+
+                            System.out.println(yourMultitimerArray.size());
+
+                            //---- ---- ---
+
+//
+
+                            multiTimerArrayListToBeSaved.addAll(yourMultitimerArray);
+
+                        }
+
+
+
+
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+//
+//
+//                //------
+
+
+                multiTimerArrayListToBeSaved.add(multiTimer);
+
+                //ask for title and redirect to save page
+                //AlertDialog
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(BuildScreenActivity.this);
+                builder.setTitle("Set a title for your multi-timer");
+
+
+// Set up the input
+                final EditText input = new EditText(BuildScreenActivity.this);
+// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+                input.setInputType(InputType.TYPE_CLASS_TEXT);
+                builder.setView(input);
+
+// Set up the buttons
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //REFERENCE---------
+                        DatabaseReference referenceMultiTimerArraySave = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID);
+
+                        //filling in the title of the multi-timer
+                        m_Text = input.getText().toString();
+                        multiTimer.setTitle(m_Text);
+                        reference.child(id).setValue(multiTimer);
+                        //----
+
+                        //get the multi-timer array from db
+
+
+                        //update it and push back to db
+                        referenceMultiTimerArraySave.child("multitimer arraylist").setValue(multiTimerArrayListToBeSaved).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if(task.isSuccessful()){
+                                    Toast.makeText(BuildScreenActivity.this,"Multi-timer saved",Toast.LENGTH_LONG).show();
+
+                                }
+
+                            }
+                        });
+
+                        //goto run page
+
+                        Intent intent;
+                        intent = new Intent(BuildScreenActivity.this, RunPageActivity.class);
+                        System.out.println(id);
+                        intent.putExtra("id", id);
+//                            intent.putExtra("view",layoutManager)
+                        startActivity(intent);
+
+
+
+
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+                builder.show();
+
+
+
+
+
+
             }
         });
 
         //---
+
+
+    }
+
+    private void alertDialogForTitle() {
+        //AlertDialog
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(BuildScreenActivity.this);
+        builder.setTitle("Set a title for your multi-timer");
+
+
+// Set up the input
+        final EditText input = new EditText(BuildScreenActivity.this);
+// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        builder.setView(input);
+
+// Set up the buttons
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                //filling in the title of the multi-timer
+                m_Text = input.getText().toString();
+                multiTimer.setTitle(m_Text);
+                reference.child(id).setValue(multiTimer);
+                //----
+
+                Intent intent;
+                intent = new Intent(BuildScreenActivity.this, RunPageActivity.class);
+                System.out.println(id);
+                intent.putExtra("id", id);
+//                            intent.putExtra("view",layoutManager)
+                startActivity(intent);
+
+
+
+
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
 
 
     }

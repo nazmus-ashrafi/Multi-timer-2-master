@@ -8,8 +8,9 @@
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:cardCornerRadius="20dp">
+        android:layout_height="600dp"
+        app:cardCornerRadius="20dp"
+        tools:ignore="MissingConstraints">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -22,6 +23,7 @@
                 android:layout_height="142dp"
                 android:layout_marginBottom="16dp"
                 android:gravity="center"
+                android:fontFamily="@font/caveat_bold"
 
                 android:text="You have finished the activities."
                 android:textColor="#4A4A4A"
@@ -57,7 +59,7 @@
 
                 android:layout_marginStart="44dp"
                 android:layout_marginEnd="32dp"
-                android:layout_marginBottom="80dp"
+                android:layout_marginBottom="50dp"
 
                 android:background="@drawable/bt_ui_readmore"
                 android:paddingLeft="30dp"
@@ -79,7 +81,7 @@
 
                 android:layout_marginStart="24dp"
                 android:layout_marginEnd="44dp"
-                android:layout_marginBottom="80dp"
+                android:layout_marginBottom="50dp"
 
                 android:background="@drawable/bt_ui_readmore"
                 android:paddingLeft="30dp"

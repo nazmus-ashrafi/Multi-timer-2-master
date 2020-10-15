@@ -947,7 +947,27 @@ public class RunPageActivity extends AppCompatActivity {
 
         customDialog.show();
 
+        customDialog.setCanceledOnTouchOutside(false);
+
+        btnReset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), RunPageActivity.class);
+                intent.putExtra("id", idUni);
+                startActivity(intent);
+
+            }
+        });
+
+        btnDone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                System.out.println("Go to dashboard");
+                Intent intent = new Intent(getApplicationContext(), LoggedInDashboardFragment.class);
+            }
+        });
+
     }
 
-
 }
+

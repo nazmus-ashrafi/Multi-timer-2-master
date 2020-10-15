@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    >
+    <androidx.cardview.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="25dp"
+        app:cardElevation="0dp">
+        <LinearLayout
+            android:layout_width="140dp"
+            android:layout_height="200dp"
+
+            android:orientation="vertical"
+            android:background="@color/cardColorBlueH">
+            <TextView
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:text="Step 1"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:layout_marginTop="10dp"
+                android:id="@+id/stepnum"
+                android:fontFamily="@font/caveat_bold"
+                android:textColor="@color/colorTextBlack"
+                android:layout_marginLeft="22dp"/>
+
+            <com.nazmusashrafi.multi_timer_2_master.UnderlineTextView
+                android:id="@+id/steptitle"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/caveat_bold"
+                android:gravity="center"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:text="this is a title which can be pretty long"
+                android:textColor="@color/colorTextBlack"
+
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="00 hr: 25 min"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:id="@+id/steptime"
+                android:fontFamily="@font/caveat_bold"
+                android:textColor="@color/colorTextBlack"
+
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="22dp"
+
+                />
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+</LinearLayout>
