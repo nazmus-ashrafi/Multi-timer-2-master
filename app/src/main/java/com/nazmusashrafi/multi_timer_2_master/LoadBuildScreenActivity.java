@@ -17,7 +17,6 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Parcelable;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -46,12 +45,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-public class BuildScreenActivity extends AppCompatActivity {
+public class LoadBuildScreenActivity extends AppCompatActivity {
 
 
     RecyclerView rvTimers;
@@ -63,6 +60,9 @@ public class BuildScreenActivity extends AppCompatActivity {
     //Firebase variables
     private DatabaseReference reference;
     private DatabaseReference referenceMultiTimer;
+    private DatabaseReference referenceMultiTimerAddAtEnd;
+    private DatabaseReference referenceTemporaryMultiTimer;
+
     private FirebaseAuth mAuth;
     private FirebaseUser mUser;
     private String onlineUserID;
@@ -72,16 +72,22 @@ public class BuildScreenActivity extends AppCompatActivity {
     int stepNumber = 0;
     int position;
     long displayTimeAtTop;
+    int counter=0;
 
     ArrayList<SingleTimer> singleTimer = new ArrayList<>();
     ArrayList<MultiTimer> multiTimerArrayListToBeSaved = new ArrayList<>();
     Context context;
     String id;
+    String index;
+    String idGotten;
 
     long t2Hour,t2Minute;
 //    private TextView tvTimerView; //display
 
     private String m_Text = "";
+
+    int editCounter=0;
+    boolean multitimersTemporaryPresent = false;
 
 
     public void AdapterTimers(ArrayList<SingleTimer> singleTimer, Context context) {
@@ -116,9 +122,26 @@ public class BuildScreenActivity extends AppCompatActivity {
         reference = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimers");
 
 
-            id = reference.push().getKey();
+        //getting ifo from parentRecyclerAdapter
+        ArrayList<SingleTimer> singletimerarraylist =(ArrayList<SingleTimer>) getIntent().getSerializableExtra("SINGLETIMER_ARRAY");
+        id =getIntent().getStringExtra("MULTITIMER_ID");
+        index =getIntent().getStringExtra("MULTITIMER_INDEX");
 
+        idGotten = id;
 
+        //-----
+
+        //making a backup reference
+        //REFERENCE---------
+        referenceTemporaryMultiTimer = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimers temporary").child(id);
+
+        //----------
+
+        if(singletimerarraylist!=null){
+            System.out.println("bagga " + singletimerarraylist.get(0).getTitle());
+
+            singleTimer.addAll(singletimerarraylist);
+        }
 
         //recycler view animation
         recyclerViewAnimation();
@@ -141,7 +164,7 @@ public class BuildScreenActivity extends AppCompatActivity {
                     alertDialogForTitle();
 
                 }else{
-                    Toast.makeText(BuildScreenActivity.this,"Must have at-least 2 timers",Toast.LENGTH_LONG).show();
+                    Toast.makeText(LoadBuildScreenActivity.this,"Must have at-least 2 timers",Toast.LENGTH_LONG).show();
                 }
 
             }
@@ -190,16 +213,20 @@ public class BuildScreenActivity extends AppCompatActivity {
 
 
                 multiTimerArrayListToBeSaved.add(multiTimer);
+//                multiTimerArrayListToBeSaved.remove(0);
+
+                System.out.println("The size is "+ multiTimerArrayListToBeSaved.size());
+
 
                 //ask for title and redirect to save page
                 //AlertDialog
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(BuildScreenActivity.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(LoadBuildScreenActivity.this);
                 builder.setTitle("Set a title for your multi-timer");
 
 
 // Set up the input
-                final EditText input = new EditText(BuildScreenActivity.this);
+                final EditText input = new EditText(LoadBuildScreenActivity.this);
 // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
                 input.setInputType(InputType.TYPE_CLASS_TEXT);
                 builder.setView(input);
@@ -214,18 +241,20 @@ public class BuildScreenActivity extends AppCompatActivity {
                         //filling in the title of the multi-timer
                         m_Text = input.getText().toString();
                         multiTimer.setTitle(m_Text);
-                        reference.child(id).setValue(multiTimer);
+                        reference.child(idGotten).setValue(multiTimer);
                         //----
 
                         //get the multi-timer array from db
 
 
                         //update it and push back to db
-                        referenceMultiTimerArraySave.child("multitimer arraylist").setValue(multiTimerArrayListToBeSaved).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        referenceMultiTimerArraySave.child("multitimer arraylist").child(index).child("singleTimerArrayList").setValue(multiTimerArrayListToBeSaved.get(0).getSingleTimerArrayList()).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if(task.isSuccessful()){
-                                    Toast.makeText(BuildScreenActivity.this,"Multi-timer saved",Toast.LENGTH_LONG).show();
+                                    Toast.makeText(LoadBuildScreenActivity.this,"Multi-timer saved",Toast.LENGTH_LONG).show();
+                                    //notify change in parent recycler adapter
+
 
                                 }
 
@@ -235,7 +264,7 @@ public class BuildScreenActivity extends AppCompatActivity {
                         //goto run page
 
                         Intent intent;
-                        intent = new Intent(BuildScreenActivity.this, RunPageActivity.class);
+                        intent = new Intent(LoadBuildScreenActivity.this, RunPageActivity.class);
                         System.out.println(id);
                         intent.putExtra("id", id);
 //                            intent.putExtra("view",layoutManager)
@@ -268,12 +297,12 @@ public class BuildScreenActivity extends AppCompatActivity {
     private void alertDialogForTitle() {
         //AlertDialog
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(BuildScreenActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(LoadBuildScreenActivity.this);
         builder.setTitle("Set a title for your multi-timer");
 
 
 // Set up the input
-        final EditText input = new EditText(BuildScreenActivity.this);
+        final EditText input = new EditText(LoadBuildScreenActivity.this);
 // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
         input.setInputType(InputType.TYPE_CLASS_TEXT);
         builder.setView(input);
@@ -286,17 +315,33 @@ public class BuildScreenActivity extends AppCompatActivity {
                 //filling in the title of the multi-timer
                 m_Text = input.getText().toString();
                 multiTimer.setTitle(m_Text);
-                reference.child(id).setValue(multiTimer);
+//                reference.child(id).setValue(multiTimer);
                 //----
 
-                Intent intent;
-                intent = new Intent(BuildScreenActivity.this, RunPageActivity.class);
-                System.out.println(id);
-                intent.putExtra("id", id);
+                if(editCounter==0){
+                    Intent intent;
+                    intent = new Intent(LoadBuildScreenActivity.this, RunPageActivity.class);
+                    //Send to loadrunpageactivity with multitimertemporary as reference
+
+                    System.out.println(id);
+                    intent.putExtra("id", id);
+
 //                            intent.putExtra("view",layoutManager)
-                startActivity(intent);
+                    startActivity(intent);
+                }else{
+                    Intent intent;
+                    intent = new Intent(LoadBuildScreenActivity.this, LoadRunPageActivity.class);
+
+                    System.out.println(id);
+                    intent.putExtra("id", id);
+
+//                            intent.putExtra("view",layoutManager)
+                    startActivity(intent);
+                }
 
 
+                //if edited and started-create new id
+                //if edited and save - save in this id
 
 
             }
@@ -425,26 +470,8 @@ public class BuildScreenActivity extends AppCompatActivity {
 
         if(singleTimer.size()==1){
 
-            singleTimer.clear();
-            referenceMultiTimer.setValue(null).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    if(task.isSuccessful()){
-                        Toast.makeText(BuildScreenActivity.this,"Multi-timer updated",Toast.LENGTH_LONG).show();
+            Toast.makeText(LoadBuildScreenActivity.this,"Saved multi-timer cannot be empty",Toast.LENGTH_LONG).show();
 
-                    }
-
-                }
-            });
-            mAdapter.notifyDataSetChanged();
-//                    referenceMultiTimer = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child(id);
-//                    referenceMultiTimer.child("singleTimerArrayList").child(Integer.toString(position)).setValue(null);
-            //
-            totalTime=0;
-            stepNumber=0;
-
-            t2Minute=0;
-            t2Hour=0;
 
         }else if(singleTimer.size()>1){
 
@@ -476,23 +503,26 @@ public class BuildScreenActivity extends AppCompatActivity {
 //                multiTimer.setId(id);
 //            }
 
+            //REFERENCE---------
+            DatabaseReference referenceMultiTimerRemove = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimers temporary").child(idGotten);
 
-            referenceMultiTimer.setValue(multiTimer).addOnCompleteListener(new OnCompleteListener<Void>() {
+
+
+            referenceMultiTimerRemove.setValue(multiTimer).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     if(task.isSuccessful()){
-                        Toast.makeText(BuildScreenActivity.this,"Multi-timer updated",Toast.LENGTH_LONG).show();
+                        Toast.makeText(LoadBuildScreenActivity.this,"Multi-timer updated",Toast.LENGTH_LONG).show();
 
                     }
 
-
                 }
-            });;
+            });
             mAdapter.notifyDataSetChanged();
 
 
         }else{
-            Toast.makeText(BuildScreenActivity.this,"Nothing to remove",Toast.LENGTH_LONG).show();
+            Toast.makeText(LoadBuildScreenActivity.this,"Nothing to remove",Toast.LENGTH_LONG).show();
         }
 
 //                TextView totalTimeView = findViewById(R.id.totalTimeView);
@@ -537,10 +567,12 @@ public class BuildScreenActivity extends AppCompatActivity {
         //----
     }
 
+
+
     private void editTask(final int position) {
 
         if(singleTimer.size()<1){
-            Toast.makeText(BuildScreenActivity.this,"Nothing to edit",Toast.LENGTH_LONG).show();
+            Toast.makeText(LoadBuildScreenActivity.this,"Nothing to edit",Toast.LENGTH_LONG).show();
         }else {
 
             final AlertDialog.Builder myDialog = new AlertDialog.Builder(this, R.style.CustomDialog);
@@ -577,43 +609,119 @@ public class BuildScreenActivity extends AppCompatActivity {
 //        reference = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID);
 
 
-            referenceMultiTimer.addValueEventListener(new ValueEventListener() {
+            //checking if multitimers tempory is present
+            DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID);
+            rootRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-//                referenceMultiTimer = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child(multiTimer.getId());
-
-                    if ((String) dataSnapshot.child("singleTimerArrayList").child(Integer.toString(position)).child("title").getValue() != null) {
-//                    ArrayList<SingleTimer> retrivedArray = (ArrayList<SingleTimer>) dataSnapshot.child("singleTimerArrayList").getValue();
-
-                        //populate inputs with retrieved data
-                        String retrivedDesc = (String) dataSnapshot.child("singleTimerArrayList").child(Integer.toString(position)).child("description").getValue();
-                        String retrivedTitle = (String) dataSnapshot.child("singleTimerArrayList").child(Integer.toString(position)).child("title").getValue();
-                        Long retrivedTime = (Long) dataSnapshot.child("singleTimerArrayList").child(Integer.toString(position)).child("time").getValue();
-                        String totalTimeDisplay = String.format("%02d hr : %02d min", TimeUnit.MILLISECONDS.toHours(retrivedTime),
-                                TimeUnit.MILLISECONDS.toMinutes(retrivedTime) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(retrivedTime)));
-                        long cardColor = (long) dataSnapshot.child("singleTimerArrayList").child(Integer.toString(position)).child("color").getValue();
-
-                        title.setText(retrivedTitle);
-                        desc.setText(retrivedDesc);
-                        tvTimerView.setText(totalTimeDisplay);
-                        int colorInteger = (int) cardColor;
-
-                        inputViewColor.setBackgroundColor(ContextCompat.getColor(myDialog.getContext(), colorInteger));
-
-                        t2Minute = ((retrivedTime / (1000*60)) % 60);
-                        t2Hour   = ((retrivedTime / (1000*60*60)) % 24);
-
+                public void onDataChange(DataSnapshot snapshot) {
+                    if (snapshot.hasChild("multitimers temporary")) {
+                        multitimersTemporaryPresent = true;
                     }
-
                 }
-
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
 
                 }
             });
+            //------
+
+            if(editCounter==0 && !multitimersTemporaryPresent){
+
+                //REFERENCE---------
+                referenceMultiTimer = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimers").child(id);
+
+
+                referenceMultiTimer.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+//                referenceMultiTimer = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child(multiTimer.getId());
+
+                        if ((String) dataSnapshot.child("singleTimerArrayList").child(Integer.toString(position)).child("title").getValue() != null) {
+//                    ArrayList<SingleTimer> retrivedArray = (ArrayList<SingleTimer>) dataSnapshot.child("singleTimerArrayList").getValue();
+
+                            //populate inputs with retrieved data
+                            String retrivedDesc = (String) dataSnapshot.child("singleTimerArrayList").child(Integer.toString(position)).child("description").getValue();
+                            String retrivedTitle = (String) dataSnapshot.child("singleTimerArrayList").child(Integer.toString(position)).child("title").getValue();
+                            Long retrivedTime = (Long) dataSnapshot.child("singleTimerArrayList").child(Integer.toString(position)).child("time").getValue();
+                            String totalTimeDisplay = String.format("%02d hr : %02d min", TimeUnit.MILLISECONDS.toHours(retrivedTime),
+                                    TimeUnit.MILLISECONDS.toMinutes(retrivedTime) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(retrivedTime)));
+                            long cardColor = (long) dataSnapshot.child("singleTimerArrayList").child(Integer.toString(position)).child("color").getValue();
+
+                            title.setText(retrivedTitle);
+                            desc.setText(retrivedDesc);
+                            tvTimerView.setText(totalTimeDisplay);
+                            int colorInteger = (int) cardColor;
+
+                            inputViewColor.setBackgroundColor(ContextCompat.getColor(myDialog.getContext(), colorInteger));
+
+                            t2Minute = ((retrivedTime / (1000*60)) % 60);
+                            t2Hour   = ((retrivedTime / (1000*60*60)) % 24);
+
+                        }
+
+                    }
+
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+
+
+
+            }else{
+
+                //REFERENCE---------
+                referenceTemporaryMultiTimer = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimers temporary").child(id);
+
+
+                referenceTemporaryMultiTimer.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+//                referenceMultiTimer = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child(multiTimer.getId());
+
+                        if ((String) dataSnapshot.child("singleTimerArrayList").child(Integer.toString(position)).child("title").getValue() != null) {
+//                    ArrayList<SingleTimer> retrivedArray = (ArrayList<SingleTimer>) dataSnapshot.child("singleTimerArrayList").getValue();
+
+                            //populate inputs with retrieved data
+                            String retrivedDesc = (String) dataSnapshot.child("singleTimerArrayList").child(Integer.toString(position)).child("description").getValue();
+                            String retrivedTitle = (String) dataSnapshot.child("singleTimerArrayList").child(Integer.toString(position)).child("title").getValue();
+                            Long retrivedTime = (Long) dataSnapshot.child("singleTimerArrayList").child(Integer.toString(position)).child("time").getValue();
+                            String totalTimeDisplay = String.format("%02d hr : %02d min", TimeUnit.MILLISECONDS.toHours(retrivedTime),
+                                    TimeUnit.MILLISECONDS.toMinutes(retrivedTime) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(retrivedTime)));
+                            long cardColor = (long) dataSnapshot.child("singleTimerArrayList").child(Integer.toString(position)).child("color").getValue();
+
+                            title.setText(retrivedTitle);
+                            desc.setText(retrivedDesc);
+                            tvTimerView.setText(totalTimeDisplay);
+                            int colorInteger = (int) cardColor;
+
+                            inputViewColor.setBackgroundColor(ContextCompat.getColor(myDialog.getContext(), colorInteger));
+
+                            t2Minute = ((retrivedTime / (1000*60)) % 60);
+                            t2Hour   = ((retrivedTime / (1000*60*60)) % 24);
+
+                        }
+
+                    }
+
+
+
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+
+            }
+
 
             duration.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -630,7 +738,7 @@ public class BuildScreenActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
 
-
+                    editCounter=1;
                     updateAfterEdit(position, title, desc, dialog);
 
                 }
@@ -651,12 +759,31 @@ public class BuildScreenActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+        //on back button here and back button/on complete in run page -  delete multitimer temporary ***
+
+
+
+        //deleting multitimer temporary
+        //REFERENCE---------
+        referenceTemporaryMultiTimer = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimers temporary");
+        referenceTemporaryMultiTimer.setValue(null);
+
+        //send to dashboard
+        Intent intent = new Intent(LoadBuildScreenActivity.this,LoggedInTotalDashboardActivity.class);
+        startActivity(intent);
+
+
+    }
+
     private void updateAfterEdit(int position, EditText title, EditText desc, AlertDialog dialog) {
+        //updates temporary multitimer
 
         if((t2Hour*3600*1000 + t2Minute*60*1000)==0){
 //                    tvTimerView.setError("Duration cannot be 0");
 
-            Toast.makeText(BuildScreenActivity.this,"Set a duration",Toast.LENGTH_LONG).show();
+            Toast.makeText(LoadBuildScreenActivity.this,"Set a duration",Toast.LENGTH_LONG).show();
             return;
 
         }
@@ -685,11 +812,12 @@ public class BuildScreenActivity extends AppCompatActivity {
         //--
 
         multiTimer.setSingleTimerArrayList(singleTimer);
-        referenceMultiTimer.setValue(multiTimer).addOnCompleteListener(new OnCompleteListener<Void>() {
+
+        referenceTemporaryMultiTimer.setValue(multiTimer).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful()){
-                    Toast.makeText(BuildScreenActivity.this,"Multi-timer updated",Toast.LENGTH_LONG).show();
+                    Toast.makeText(LoadBuildScreenActivity.this,"Multi-timer updated",Toast.LENGTH_LONG).show();
 
                 }
 
@@ -724,9 +852,12 @@ public class BuildScreenActivity extends AppCompatActivity {
                         // the user clicked on colors[which]
 
                         if (which==0){
+
                             addAtEnd();
+
                         }else{
                             addAfterCurrentStep();
+
 
                         }
 
@@ -743,10 +874,10 @@ public class BuildScreenActivity extends AppCompatActivity {
     }
 
     private void addAfterCurrentStep() {
-        AlertDialog.Builder myDialog = new AlertDialog.Builder(BuildScreenActivity.this,R.style.CustomDialog);
+        AlertDialog.Builder myDialog = new AlertDialog.Builder(LoadBuildScreenActivity.this,R.style.CustomDialog);
 
 
-        LayoutInflater inflater = LayoutInflater.from(BuildScreenActivity.this);
+        LayoutInflater inflater = LayoutInflater.from(LoadBuildScreenActivity.this);
 
         View myView = inflater.inflate(R.layout.activity_timer_inputs,null);
         myDialog.setView(myView);
@@ -793,7 +924,7 @@ public class BuildScreenActivity extends AppCompatActivity {
             color =  R.color.cardColorTealL;
         }
 
-        inputViewColor.setBackgroundColor(ContextCompat.getColor(BuildScreenActivity.this, color));
+        inputViewColor.setBackgroundColor(ContextCompat.getColor(LoadBuildScreenActivity.this, color));
 
         final int cardFinalColor = color;
 
@@ -828,13 +959,13 @@ public class BuildScreenActivity extends AppCompatActivity {
 
 
         confirm.setOnClickListener(new View.OnClickListener() {
+
+            ArrayList<SingleTimer> first = new ArrayList<SingleTimer>();
+            ArrayList<SingleTimer> second = new ArrayList<SingleTimer>();
+
+
             @Override
             public void onClick(View view) {
-
-                ArrayList<SingleTimer> first = new ArrayList<SingleTimer>();
-                ArrayList<SingleTimer> second = new ArrayList<SingleTimer>();
-
-
                 String mTitle = title.getText().toString().trim();
                 String mDesc = desc.getText().toString().trim();
 
@@ -854,7 +985,7 @@ public class BuildScreenActivity extends AppCompatActivity {
                 if((t2Hour*3600*1000 + t2Minute*60*1000)==0){
 //                    tvTimerView.setError("Duration cannot be 0");
 
-                    Toast.makeText(BuildScreenActivity.this,"Set a duration",Toast.LENGTH_LONG).show();
+                    Toast.makeText(LoadBuildScreenActivity.this,"Set a duration",Toast.LENGTH_LONG).show();
                     return;
 
                 }
@@ -871,9 +1002,7 @@ public class BuildScreenActivity extends AppCompatActivity {
 
                 //2,1
 
-
 //                singleTimer.add(new SingleTimer('s',mTitle,mDesc,2,2));
-
 
                 //breaking the original arraylist and reconstruction with new element ----------
 
@@ -901,37 +1030,52 @@ public class BuildScreenActivity extends AppCompatActivity {
                 singleTimer.addAll(second);
 
 
-                //-------------------
 
+                //-------------------
 
 
 //                for(int k=singleTimer.size()-1;k >= position;k--){
 //
-//                    singleTimer.add(new SingleTimer('6',mTitle,mDesc,2,cardFinalColor));
+//                    //fix bug - ghost step 54
+//
+//                        singleTimer.add(new SingleTimer('s',"kika",mDesc,2,cardFinalColor));
+//
+//
 //                    System.out.println(k); //2
 //                    System.out.println(position); //1
 //
 //                    singleTimer.get(k+1).setStepNumber(singleTimer.get(k+1).getStepNumber()+1);
 //                    //3,2
+//
+//
 //                    singleTimer.set((k+1),singleTimer.get(k));
 //
 ////                    singleTimer.remove(singleTimer.size()-1);
 //
 ////                    singleTimer.toArray()[k+1] = singleTimer.toArray()[k];
+//
+//                    counter++;
+//
 //                }
 //
-//                singleTimer.remove(singleTimer.size()-1);
+//                System.out.println("Counter: "+ counter);
+//
+//                    singleTimer.remove(singleTimer.size()-1);
+//
 //
 //                //-----------------------------
 //
 //
 //                singleTimer.set((position+1),new SingleTimer(stepNumber,mTitle,mDesc,t2Hour*3600*1000 + t2Minute*60*1000,cardFinalColor));
 
+                System.out.println(singleTimer.size());
+
                 long updatedTotalTime=0;
 
                 for(int i = 0; i<singleTimer.size();i++){
                     updatedTotalTime = updatedTotalTime + singleTimer.get(i).getTime();
                 }
+
 
                 multiTimer.setSingleTimerArrayList(singleTimer);
                 multiTimer.setTitle("");
@@ -949,7 +1093,7 @@ public class BuildScreenActivity extends AppCompatActivity {
 //                    mAdapter.notifyItemChanged(3);
                 mAdapter.notifyDataSetChanged();
 
-                //-----
+                //--------
 
                 //Total time calculation and display on top of screen
 
@@ -968,12 +1112,12 @@ public class BuildScreenActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if(task.isSuccessful()){
-                                Toast.makeText(BuildScreenActivity.this,"Multi-timer updated",Toast.LENGTH_LONG).show();
+                                Toast.makeText(LoadBuildScreenActivity.this,"Multi-timer updated",Toast.LENGTH_LONG).show();
 
                             }
 
                             //REFERENCE---------
-                            referenceMultiTimer = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimers").child(multiTimer.getId());
+                            referenceMultiTimer = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimers").child(id);
 
                             //optional check
                             referenceMultiTimer.addValueEventListener(new ValueEventListener() {
@@ -1000,15 +1144,16 @@ public class BuildScreenActivity extends AppCompatActivity {
                 }else{
 
                     //REFERENCE---------
-                    referenceMultiTimer = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimers").child(multiTimer.getId());
+                    referenceMultiTimer = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimers").child(idGotten);
 
+                    System.out.println("this is id at push "+ id);
 
                     //update multitimer
                     referenceMultiTimer.setValue(multiTimer).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if(task.isSuccessful()){
-                                Toast.makeText(BuildScreenActivity.this,"Multitimer updated",Toast.LENGTH_LONG).show();
+                                Toast.makeText(LoadBuildScreenActivity.this,"Multitimer updated",Toast.LENGTH_LONG).show();
 
                                 //optional check
                                 referenceMultiTimer.addValueEventListener(new ValueEventListener() {
@@ -1031,6 +1176,41 @@ public class BuildScreenActivity extends AppCompatActivity {
 
                         }
                     });
+
+                    //update multitimers temporary array
+                    //REFERENCE---------
+                    referenceMultiTimerAddAtEnd = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimers temporary").child(idGotten);
+
+                    //update multitimer
+                    referenceMultiTimerAddAtEnd.setValue(multiTimer).addOnCompleteListener(new OnCompleteListener<Void>() { //BUGGY
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(task.isSuccessful()){
+                                Toast.makeText(LoadBuildScreenActivity.this,"Multitimer updated",Toast.LENGTH_LONG).show();
+
+                                //optional check
+                                referenceMultiTimer.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        if((ArrayList<SingleTimer>) dataSnapshot.child("singleTimerArrayList").getValue()!=null){
+                                            ArrayList<SingleTimer> retrivedArray = (ArrayList<SingleTimer>) dataSnapshot.child("singleTimerArrayList").getValue();
+
+//                                            System.out.println(retrivedArray.toString());
+                                        }
+
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+                            }
+
+                        }
+                    });
+
+
 
                 }
 
@@ -1074,9 +1254,9 @@ public class BuildScreenActivity extends AppCompatActivity {
     }
 
     private void addAtEnd() {
-        AlertDialog.Builder myDialog = new AlertDialog.Builder(BuildScreenActivity.this,R.style.CustomDialog);
+        AlertDialog.Builder myDialog = new AlertDialog.Builder(LoadBuildScreenActivity.this,R.style.CustomDialog);
 
-        LayoutInflater inflater = LayoutInflater.from(BuildScreenActivity.this);
+        LayoutInflater inflater = LayoutInflater.from(LoadBuildScreenActivity.this);
 
         View myView = inflater.inflate(R.layout.activity_timer_inputs,null);
         myDialog.setView(myView);
@@ -1123,7 +1303,7 @@ public class BuildScreenActivity extends AppCompatActivity {
             color =  R.color.cardColorTealL;
         }
 
-        inputViewColor.setBackgroundColor(ContextCompat.getColor(BuildScreenActivity.this, color));
+        inputViewColor.setBackgroundColor(ContextCompat.getColor(LoadBuildScreenActivity.this, color));
 
         final int cardFinalColor = color;
 
@@ -1178,7 +1358,7 @@ public class BuildScreenActivity extends AppCompatActivity {
                 if((t2Hour*3600*1000 + t2Minute*60*1000)==0){
 //                    tvTimerView.setError("Duration cannot be 0");
 
-                    Toast.makeText(BuildScreenActivity.this,"Set a duration",Toast.LENGTH_LONG).show();
+                    Toast.makeText(LoadBuildScreenActivity.this,"Set a duration",Toast.LENGTH_LONG).show();
                     return;
 
                 }
@@ -1231,12 +1411,13 @@ public class BuildScreenActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if(task.isSuccessful()){
-                                Toast.makeText(BuildScreenActivity.this,"Multi-timer updated",Toast.LENGTH_LONG).show();
+                                Toast.makeText(LoadBuildScreenActivity.this,"Multi-timer updated",Toast.LENGTH_LONG).show();
 
                             }
 
                             //REFERENCE---------
-                            referenceMultiTimer = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimers").child(multiTimer.getId());
+                            referenceMultiTimer = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimers").child(id);
+
 
                             //optional check
                             referenceMultiTimer.addValueEventListener(new ValueEventListener() {
@@ -1262,15 +1443,17 @@ public class BuildScreenActivity extends AppCompatActivity {
 
 
                 }else{
+
+                    //update multitimer array
                     //REFERENCE---------
-                    referenceMultiTimer = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimers").child(multiTimer.getId());
+                    referenceMultiTimer = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimers").child(idGotten);
 
                     //update multitimer
                     referenceMultiTimer.setValue(multiTimer).addOnCompleteListener(new OnCompleteListener<Void>() { //BUGGY
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if(task.isSuccessful()){
-                                Toast.makeText(BuildScreenActivity.this,"Multitimer updated",Toast.LENGTH_LONG).show();
+                                Toast.makeText(LoadBuildScreenActivity.this,"Multitimer updated",Toast.LENGTH_LONG).show();
 
                                 //optional check
                                 referenceMultiTimer.addValueEventListener(new ValueEventListener() {
@@ -1293,6 +1476,40 @@ public class BuildScreenActivity extends AppCompatActivity {
 
                         }
                     });
+
+                    //update multitimers temporary array 
+                    //REFERENCE---------
+                    referenceMultiTimerAddAtEnd = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimers temporary").child(idGotten);
+
+                    //update multitimer
+                   referenceMultiTimerAddAtEnd.setValue(multiTimer).addOnCompleteListener(new OnCompleteListener<Void>() { //BUGGY
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(task.isSuccessful()){
+                                Toast.makeText(LoadBuildScreenActivity.this,"Multitimer updated",Toast.LENGTH_LONG).show();
+
+                                //optional check
+                                referenceMultiTimer.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        if((ArrayList<SingleTimer>) dataSnapshot.child("singleTimerArrayList").getValue()!=null){
+                                            ArrayList<SingleTimer> retrivedArray = (ArrayList<SingleTimer>) dataSnapshot.child("singleTimerArrayList").getValue();
+
+//                                            System.out.println(retrivedArray.toString());
+                                        }
+
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+                            }
+
+                        }
+                    });
+
 
                 }
 
@@ -1336,7 +1553,7 @@ public class BuildScreenActivity extends AppCompatActivity {
     private void timePicker(final TextView tvTimerView) {
         //Initialize time picker dialog
         TimePickerDialog timePickerDialog = new TimePickerDialog(
-                BuildScreenActivity.this,
+                LoadBuildScreenActivity.this,
                 android.R.style.Theme_Holo_Light_Dialog_MinWidth,
                 new TimePickerDialog.OnTimeSetListener() {
                     @Override

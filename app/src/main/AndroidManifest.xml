@@ -11,6 +11,8 @@
         android:theme="@style/AppTheme">
         <activity android:name=".RunPageActivity" />
         <activity android:name=".BuildScreenActivity" />
+        <activity android:name=".LoadBuildScreenActivity" />
+        <activity android:name=".LoadRunPageActivity" />
         <activity android:name=".LoggedInTotalDashboardActivity" />
         <activity android:name=".RegistrationActivity" />
         <activity android:name=".LoginActivity" />

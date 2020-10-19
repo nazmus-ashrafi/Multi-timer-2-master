@@ -7,18 +7,25 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
+
+    android:background="#00555555"
+
     >
     <androidx.cardview.widget.CardView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:cardCornerRadius="25dp"
-        app:cardElevation="0dp">
+        app:cardElevation="0dp"
+
+        app:cardBackgroundColor="#26555555"
+
+        >
         <LinearLayout
             android:layout_width="140dp"
             android:layout_height="200dp"
 
             android:orientation="vertical"
-            android:background="@color/cardColorBlueH">
+            >
             <TextView
                 android:layout_width="80dp"
                 android:layout_height="wrap_content"

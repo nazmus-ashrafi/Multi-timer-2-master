@@ -34,6 +34,8 @@ public class LoggedInSavedTimersFragment extends Fragment {
 
     ArrayList<String> itemsArrayList = new ArrayList<>();
     ArrayList<Long> itemsTimeArrayList = new ArrayList<>();
+    ArrayList<Long> itemsColorArrayList = new ArrayList<>();
+
 
     //Firebase variables
     private DatabaseReference reference;
@@ -47,7 +49,7 @@ public class LoggedInSavedTimersFragment extends Fragment {
     ArrayList<MultiTimer> multiTimerArrayList = new ArrayList<>();
     ArrayList<String> multiTimerTitleArrayList = new ArrayList<>();
     ArrayList<Long> multiTimerTotalTimeArrayList = new ArrayList<>();
-
+    ArrayList<Long> multiTimerColorArrayList = new ArrayList<>();
 
 
 
@@ -109,20 +111,20 @@ public class LoggedInSavedTimersFragment extends Fragment {
                     for(int i=0;i<yourMultitimerArray.size();i++){
                         multiTimerTitleArrayList.add(yourMultitimerArray.get(i).getTitle());
                         multiTimerTotalTimeArrayList.add(yourMultitimerArray.get(i).getTotalTime());
+                        multiTimerColorArrayList.add((long) yourMultitimerArray.get(i).getSingleTimerArrayList().get(0).getColor());
 
 
                     }
 
-                    itemsArrayList.addAll(multiTimerTitleArrayList);
-                    itemsTimeArrayList.addAll(multiTimerTotalTimeArrayList);
+                    itemsArrayList.addAll(multiTimerTitleArrayList); //multitimer title
+                    itemsTimeArrayList.addAll(multiTimerTotalTimeArrayList); //multitimer total time
+                    itemsColorArrayList.addAll(multiTimerColorArrayList); //multitimer color
                     //send itemstmearraylist to parent recycler view
-
-                    System.out.println(multiTimerTotalTimeArrayList.toString());
 
 
                     //
 
-                    adapter = new ParentRecyclerAdapter(itemsArrayList,itemsTimeArrayList,getActivity());
+                    adapter = new ParentRecyclerAdapter(itemsArrayList,itemsTimeArrayList,itemsColorArrayList,getActivity());
 
 
                         recyclerView.setAdapter(adapter);
@@ -132,6 +134,22 @@ public class LoggedInSavedTimersFragment extends Fragment {
 
                     loading.setVisibility(View.INVISIBLE);
 
+
+                   // move the parent recycler view
+
+//                    recyclerView.smoothScrollToPosition(itemsArrayList.size());
+//
+//                    new java.util.Timer().schedule(
+//                            new java.util.TimerTask() {
+//                                @Override
+//                                public void run() {
+//
+//                                    recyclerView.smoothScrollToPosition(0);
+//
+//                                }
+//                            },
+//                            2000
+//                    );
 
 
 

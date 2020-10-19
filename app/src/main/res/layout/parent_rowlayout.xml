@@ -19,6 +19,7 @@
         app:cardCornerRadius="0dp"
         app:cardElevation="0dp">
         <LinearLayout
+            android:id="@+id/multitimercard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -70,7 +71,7 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/button2"
+                    android:id="@+id/deleteBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="50dp"
@@ -87,7 +88,7 @@
                     android:textSize="22sp" />
 
                 <Button
-                    android:id="@+id/button3"
+                    android:id="@+id/loadBtn"
                     android:layout_width="130dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"

@@ -1,12 +1,21 @@
 package com.nazmusashrafi.multi_timer_2_master;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
+import android.os.Build;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -19,16 +28,22 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 class ParentRecyclerAdapter extends RecyclerView.Adapter<ParentRecyclerAdapter.MyViewHolder> {
 
+
+
     ArrayList<String> parentArrayList; // this is the multitimers title arraylist from db
     ArrayList<Long> parentArrayListTotTime; // this is the multitimers total time arraylist from db
+    ArrayList<Long> parentArrayListColor; // this is the multitimers color arraylist from db
     Context context;
 
-    ArrayList<String> daysArrayList = new ArrayList<>(); // this is the singletime title array list
+    ArrayList<String> daysArrayList = new ArrayList<>(); // this is the singletimer title array list
+    ArrayList<Integer> stepNoArrayList = new ArrayList<>(); // this is the singletimer step no. array list
+    ArrayList<Long> stepTimeArrayList = new ArrayList<>(); // this is the singletimer time array list
 
     //arraylists and arrays
     ArrayList<MultiTimer> multiTimerArrayList = new ArrayList<>();
@@ -42,10 +57,13 @@ class ParentRecyclerAdapter extends RecyclerView.Adapter<ParentRecyclerAdapter.M
     private String onlineUserID;
     //-----
 
+    int isLoaded =0;
 
-    public ParentRecyclerAdapter(ArrayList<String> parentArrayList,ArrayList<Long> parentArrayListTotTime, Context context) {
+
+    public ParentRecyclerAdapter(ArrayList<String> parentArrayList,ArrayList<Long> parentArrayListTotTime,ArrayList<Long> parentArrayListColor, Context context) {
         this.parentArrayList = parentArrayList;
         this.parentArrayListTotTime = parentArrayListTotTime;
+        this.parentArrayListColor = parentArrayListColor;
         this.context = context;
     }
 
@@ -55,24 +73,63 @@ class ParentRecyclerAdapter extends RecyclerView.Adapter<ParentRecyclerAdapter.M
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.parent_rowlayout,parent,false);
 
         return new MyViewHolder(view);
+
+
     }
 
+
+
+    @SuppressLint("ResourceAsColor")
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
 
         //Firebase declarations
         mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
         onlineUserID = mUser.getUid();
 
-        // Multitimer name and totaltime
-        holder.ItemName.setText(parentArrayList.get(position));
+        // Set Multitimer name, total time and color
+        holder.ItemName.setText(parentArrayList.get(position)); //name
 
         String totalhm = String.format("%02d hr : %02d min", TimeUnit.MILLISECONDS.toHours(parentArrayListTotTime.get(position)),
                 TimeUnit.MILLISECONDS.toMinutes(parentArrayListTotTime.get(position)) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(parentArrayListTotTime.get(position))));
 
+        holder.itemTotalTime.setText("Total time : " + totalhm ); //total time
 
-        holder.itemTotalTime.setText("Total time : " + totalhm );
+
+        if(parentArrayListColor.get(position) == 2131034166 ) { //color
+            holder.multitimerCard.setBackgroundColor(Color.parseColor("#D8EDEC")); //teal
+
+        }else if(parentArrayListColor.get(position) == 2131034158 ){
+            holder.multitimerCard.setBackgroundColor(Color.parseColor("#C1D5F2")); //blue
+
+        }else if(parentArrayListColor.get(position) == 2131034159 ){
+            holder.multitimerCard.setBackgroundColor(Color.parseColor("#D5CDEB")); //grape
+
+        }else if(parentArrayListColor.get(position) == 2131034164 ){
+            holder.multitimerCard.setBackgroundColor(Color.parseColor("#E7D0EB")); //purple
+
+        }else if(parentArrayListColor.get(position) == 2131034162 ){
+            holder.multitimerCard.setBackgroundColor(Color.parseColor("#E3E4EA")); //indigo
+
+        }else if(parentArrayListColor.get(position) == 2131034167 ){
+            holder.multitimerCard.setBackgroundColor(Color.parseColor("#EDEACD")); //yellow
+
+        }else if(parentArrayListColor.get(position) == 2131034160 ){
+            holder.multitimerCard.setBackgroundColor(Color.parseColor("#CDF5CE")); //green
+
+        }else if(parentArrayListColor.get(position) == 2131034163 ){
+            holder.multitimerCard.setBackgroundColor(Color.parseColor("#EBCDD2")); //pink
+
+        }else if(parentArrayListColor.get(position) == 2131034165 ){
+            holder.multitimerCard.setBackgroundColor(Color.parseColor("#CAE6FC")); //sky blue
+
+        }else if(parentArrayListColor.get(position) == 2131034156 ){
+            holder.multitimerCard.setBackgroundColor(Color.parseColor("#C1D5F2")); //blue
+
+        }
+
 
         //-------------------
 
@@ -80,10 +137,14 @@ class ParentRecyclerAdapter extends RecyclerView.Adapter<ParentRecyclerAdapter.M
         holder.ChildRV.setLayoutManager(layoutManager);
         holder.ChildRV.setHasFixedSize(true);
 
+
         //REFERENCE---------
         reference = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimer arraylist");
 
+
         reference.addValueEventListener(new ValueEventListener() {
+
+
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
@@ -94,7 +155,6 @@ class ParentRecyclerAdapter extends RecyclerView.Adapter<ParentRecyclerAdapter.M
 
                 if(yourMultitimerArray!=null){
 
-
                     //---- ---- ---
 
                     multiTimerArrayList.addAll(yourMultitimerArray);
@@ -103,36 +163,28 @@ class ParentRecyclerAdapter extends RecyclerView.Adapter<ParentRecyclerAdapter.M
 
                         singleTimerArrayList.add(yourMultitimerArray.get(i).getSingleTimerArrayList());
 
-                        for(int j=0;j<singleTimerArrayList.get(i).size();j++){
-                            System.out.println(singleTimerArrayList.get(i).get(j).getTitle());
-                        }
+//                        for(int j=0;j<singleTimerArrayList.get(i).size();j++){
+//                            System.out.println(singleTimerArrayList.get(i).get(j).getTitle());
+//
+////                            notifyDataSetChanged(); //bug fix for horizontal RV not showing up in vertical RV
+//                        }
 
                     }
 
 
-//                    itemsArrayList.addAll(multiTimerTitleArrayList);
-//                    itemsTimeArrayList.addAll(multiTimerTotalTimeArrayList);
-//                    //send itemstmearraylist to parent recycler view
-//
-//                    System.out.println(multiTimerTotalTimeArrayList.toString());
-//
-//
-//                    //
-//
-//                    adapter = new ParentRecyclerAdapter(itemsArrayList,itemsTimeArrayList,getActivity());
-//
-//
-//                    recyclerView.setAdapter(adapter);
-//
-//                    adapter.notifyDataSetChanged();
-//
-//
-//                    loading.setVisibility(View.INVISIBLE);
-
-
-
-
                 }
+
+
+
+                    if(isLoaded==0){
+                        notifyDataSetChanged(); //bug fix for horizontal RV not showing up in vertical RV
+                        isLoaded=1;
+                    }
+
+
+
+                //load button
+                //delete button
 
 
             }
@@ -142,21 +194,78 @@ class ParentRecyclerAdapter extends RecyclerView.Adapter<ParentRecyclerAdapter.M
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
+
+
+
         });
+
+
+
+        //--------------------
+
+        //load button
+
+        holder.loadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                System.out.println("briiiiiiiiiiiiis");
+
+                Intent intent;
+                intent = new Intent(holder.itemView.getContext(), LoadBuildScreenActivity.class);
+
+                intent.putExtra("SINGLETIMER_ARRAY",  multiTimerArrayList.get(position).getSingleTimerArrayList());
+                intent.putExtra("MULTITIMER_ID",  multiTimerArrayList.get(position).getId());
+                intent.putExtra("MULTITIMER_INDEX",  Integer.toString(position));
+
+
+                context.startActivity(intent);
+
+//                System.out.println(multiTimerArrayList.get(position).getId());
+
+
+
+            }
+        });
+
+
 
 
         //--------------
 
-        daysArrayList.clear();
-        String[] days ={"cook n djnjnd jnjnd njnjnd njnjnjd jnjnjd njnj","clean","cook","clean","cook","clean","cook","clean"}; // singletimer titles
+        daysArrayList.clear(); //step title arraylist
+        stepNoArrayList.clear(); //step number arraylist
+        stepTimeArrayList.clear(); //step time arraylist
 
-        for(int i=0;i<days.length;i++){
-            daysArrayList.add(days[i]);
+
+        //adds singletimer info to multitimers
+
+        for(int i=0;i<multiTimerArrayList.size();i++){
+
+            if(multiTimerArrayList.get(position).equals(multiTimerArrayList.get(i))){
+
+                    singleTimerArrayList.add(multiTimerArrayList.get(i).getSingleTimerArrayList());
+
+                    for(int j=0;j<singleTimerArrayList.get(i).size();j++){
+                        daysArrayList.add(singleTimerArrayList.get(i).get(j).getTitle()); //step title
+                        stepNoArrayList.add(singleTimerArrayList.get(i).get(j).getStepNumber()); //step number
+                        stepTimeArrayList.add(singleTimerArrayList.get(i).get(j).getTime()); //step time
+
+
+                    }
+
+
+            }
+
+
+
         }
 
-        ChildRecyclerAdapter childRecyclerAdapter = new ChildRecyclerAdapter(daysArrayList);
+
+        ChildRecyclerAdapter childRecyclerAdapter = new ChildRecyclerAdapter(daysArrayList,stepNoArrayList,stepTimeArrayList);
         holder.ChildRV.setAdapter(childRecyclerAdapter);
+
         childRecyclerAdapter.notifyDataSetChanged();
+
 
     }
 
@@ -169,13 +278,27 @@ class ParentRecyclerAdapter extends RecyclerView.Adapter<ParentRecyclerAdapter.M
     public class MyViewHolder extends RecyclerView.ViewHolder{
         TextView ItemName;
         TextView itemTotalTime;
+        Button loadButton;
+        LinearLayout multitimerCard;
+
         RecyclerView ChildRV;
+
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             ItemName = itemView.findViewById(R.id.stepname);
             itemTotalTime = itemView.findViewById(R.id.steptotaltime);
+            loadButton = itemView.findViewById(R.id.loadBtn);
+            multitimerCard = itemView.findViewById(R.id.multitimercard);
+
             ChildRV = itemView.findViewById(R.id.ChildRV);
+
+
+
         }
+
+
     }
+
+
 }

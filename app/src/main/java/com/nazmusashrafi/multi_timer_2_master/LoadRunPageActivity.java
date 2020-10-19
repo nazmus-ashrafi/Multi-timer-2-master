@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -24,7 +23,6 @@ import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,9 +43,8 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
-import java.util.Objects;
 
-public class RunPageActivity extends AppCompatActivity {
+public class LoadRunPageActivity extends AppCompatActivity {
 
     //Universal declarations
     RecyclerView rvTimers;
@@ -140,7 +137,7 @@ public class RunPageActivity extends AppCompatActivity {
 
 
         //REFERENCE---------
-        reference = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimers").child(id);
+        reference = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimers temporary").child(id);
 
         //        recycler view animation
         recyclerViewAnimation();
@@ -198,7 +195,7 @@ public class RunPageActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 if(timesUni.size()==counter+1){
-                    Toast.makeText(RunPageActivity.this,"Step "+(stepNumberUni.get(counter))+" skipped",Toast.LENGTH_LONG).show();
+                    Toast.makeText(LoadRunPageActivity.this,"Step "+(stepNumberUni.get(counter))+" skipped",Toast.LENGTH_LONG).show();
 
                     countDownTimer.cancel();
                     timerRunning = false;
@@ -214,7 +211,7 @@ public class RunPageActivity extends AppCompatActivity {
                     //stuff that happens after multi-timer finishes
                     resetStepButton.setVisibility(View.INVISIBLE);
                     skipButton.setVisibility(View.INVISIBLE);
-                    Toast.makeText(RunPageActivity.this,"Activity completed",Toast.LENGTH_LONG).show();
+                    Toast.makeText(LoadRunPageActivity.this,"Activity completed",Toast.LENGTH_LONG).show();
 
                     openCustomDialog();
 
@@ -241,7 +238,7 @@ public class RunPageActivity extends AppCompatActivity {
                         rvTimers.smoothScrollToPosition(Math.toIntExact(stepNumberUni.get(counter)));
 
                         //toast
-                        Toast.makeText(RunPageActivity.this,"Step "+(stepNumberUni.get(counter))+" skipped",Toast.LENGTH_LONG).show();
+                        Toast.makeText(LoadRunPageActivity.this,"Step "+(stepNumberUni.get(counter))+" skipped",Toast.LENGTH_LONG).show();
 
                         counter++;
 
@@ -250,7 +247,7 @@ public class RunPageActivity extends AppCompatActivity {
                         startTimer(timesUni.get(counter));
 
                     }else{
-                        Toast.makeText(RunPageActivity.this,"Can't skip if not started",Toast.LENGTH_LONG).show();
+                        Toast.makeText(LoadRunPageActivity.this,"Can't skip if not started",Toast.LENGTH_LONG).show();
                     }
 
                 }
@@ -264,7 +261,7 @@ public class RunPageActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(timesUni.size()==counter+1){
-                    Toast.makeText(RunPageActivity.this,"Step "+(stepNumberUni.get(counter))+" reset",Toast.LENGTH_LONG).show();
+                    Toast.makeText(LoadRunPageActivity.this,"Step "+(stepNumberUni.get(counter))+" reset",Toast.LENGTH_LONG).show();
 
                     countDownTimer.cancel();
                     timerRunning = false;
@@ -278,14 +275,14 @@ public class RunPageActivity extends AppCompatActivity {
                         countdownButton.setText("Start");
 
                         //toast
-                        Toast.makeText(RunPageActivity.this,"Step "+(stepNumberUni.get(counter))+" reset",Toast.LENGTH_LONG).show();
+                        Toast.makeText(LoadRunPageActivity.this,"Step "+(stepNumberUni.get(counter))+" reset",Toast.LENGTH_LONG).show();
 
                         //----------
 
                         startTimer(timesUni.get(counter));
 
                     }else{
-                        Toast.makeText(RunPageActivity.this,"Can't reset if not started",Toast.LENGTH_LONG).show();
+                        Toast.makeText(LoadRunPageActivity.this,"Can't reset if not started",Toast.LENGTH_LONG).show();
                     }
 
 
@@ -338,9 +335,9 @@ public class RunPageActivity extends AppCompatActivity {
 
                 //ask if sure or not
 
-                Intent intent = new Intent(getApplicationContext(), RunPageActivity.class);
-            intent.putExtra("id", idUni);
-            startActivity(intent);
+                Intent intent = new Intent(getApplicationContext(), LoadRunPageActivity.class);
+                intent.putExtra("id", idUni);
+                startActivity(intent);
 
             }
         });
@@ -804,7 +801,7 @@ public class RunPageActivity extends AppCompatActivity {
                     //stuff that happens after multitimer completed
                     resetStepButton.setVisibility(View.INVISIBLE);
                     skipButton.setVisibility(View.INVISIBLE);
-                    Toast.makeText(RunPageActivity.this,"Activity completed",Toast.LENGTH_LONG).show();
+                    Toast.makeText(LoadRunPageActivity.this,"Activity completed",Toast.LENGTH_LONG).show();
 
                     openCustomDialog(); // you need to dispose of this
 
@@ -954,7 +951,7 @@ public class RunPageActivity extends AppCompatActivity {
         btnReset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), RunPageActivity.class);
+                Intent intent = new Intent(getApplicationContext(), LoadRunPageActivity.class);
                 intent.putExtra("id", idUni);
                 startActivity(intent);
 
