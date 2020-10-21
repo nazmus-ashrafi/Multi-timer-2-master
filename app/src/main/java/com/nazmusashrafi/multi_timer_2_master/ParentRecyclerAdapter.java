@@ -3,6 +3,7 @@ package com.nazmusashrafi.multi_timer_2_master;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
@@ -13,12 +14,20 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -39,7 +48,7 @@ class ParentRecyclerAdapter extends RecyclerView.Adapter<ParentRecyclerAdapter.M
     ArrayList<String> parentArrayList; // this is the multitimers title arraylist from db
     ArrayList<Long> parentArrayListTotTime; // this is the multitimers total time arraylist from db
     ArrayList<Long> parentArrayListColor; // this is the multitimers color arraylist from db
-    Context context;
+
 
     ArrayList<String> daysArrayList = new ArrayList<>(); // this is the singletimer title array list
     ArrayList<Integer> stepNoArrayList = new ArrayList<>(); // this is the singletimer step no. array list
@@ -47,6 +56,8 @@ class ParentRecyclerAdapter extends RecyclerView.Adapter<ParentRecyclerAdapter.M
 
     //arraylists and arrays
     ArrayList<MultiTimer> multiTimerArrayList = new ArrayList<>();
+    ArrayList<MultiTimer> yourMultitimerArrayDel= new ArrayList<>();
+    ArrayList<MultiTimer> multiTimerArrayListDel= new ArrayList<>();
     ArrayList<ArrayList<SingleTimer>> singleTimerArrayList = new ArrayList<>();
 
     //Firebase variables
@@ -58,6 +69,10 @@ class ParentRecyclerAdapter extends RecyclerView.Adapter<ParentRecyclerAdapter.M
     //-----
 
     int isLoaded =0;
+    int count =0;
+
+
+    private Context context;
 
 
     public ParentRecyclerAdapter(ArrayList<String> parentArrayList,ArrayList<Long> parentArrayListTotTime,ArrayList<Long> parentArrayListColor, Context context) {
@@ -76,7 +91,6 @@ class ParentRecyclerAdapter extends RecyclerView.Adapter<ParentRecyclerAdapter.M
 
 
     }
-
 
 
     @SuppressLint("ResourceAsColor")
@@ -141,7 +155,6 @@ class ParentRecyclerAdapter extends RecyclerView.Adapter<ParentRecyclerAdapter.M
         //REFERENCE---------
         reference = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimer arraylist");
 
-
         reference.addValueEventListener(new ValueEventListener() {
 
 
@@ -159,6 +172,11 @@ class ParentRecyclerAdapter extends RecyclerView.Adapter<ParentRecyclerAdapter.M
 
                     multiTimerArrayList.addAll(yourMultitimerArray);
 
+                    if(count==0){
+                        multiTimerArrayListDel.addAll(multiTimerArrayList);
+                        count++;
+                    }
+
                     for(int i=0;i<yourMultitimerArray.size();i++){
 
                         singleTimerArrayList.add(yourMultitimerArray.get(i).getSingleTimerArrayList());
@@ -175,12 +193,10 @@ class ParentRecyclerAdapter extends RecyclerView.Adapter<ParentRecyclerAdapter.M
                 }
 
 
-
                     if(isLoaded==0){
                         notifyDataSetChanged(); //bug fix for horizontal RV not showing up in vertical RV
                         isLoaded=1;
                     }
-
 
 
                 //load button
@@ -188,6 +204,8 @@ class ParentRecyclerAdapter extends RecyclerView.Adapter<ParentRecyclerAdapter.M
 
 
             }
+
+
 
 
             @Override
@@ -229,7 +247,6 @@ class ParentRecyclerAdapter extends RecyclerView.Adapter<ParentRecyclerAdapter.M
 
 
 
-
         //--------------
 
         daysArrayList.clear(); //step title arraylist
@@ -241,7 +258,9 @@ class ParentRecyclerAdapter extends RecyclerView.Adapter<ParentRecyclerAdapter.M
 
         for(int i=0;i<multiTimerArrayList.size();i++){
 
-            if(multiTimerArrayList.get(position).equals(multiTimerArrayList.get(i))){
+            if(position!=multiTimerArrayList.size()){ //
+
+                if(multiTimerArrayList.get(position).equals(multiTimerArrayList.get(i))){
 
                     singleTimerArrayList.add(multiTimerArrayList.get(i).getSingleTimerArrayList());
 
@@ -254,7 +273,11 @@ class ParentRecyclerAdapter extends RecyclerView.Adapter<ParentRecyclerAdapter.M
                     }
 
 
+                }
+
             }
+
+
 
 
 
@@ -267,7 +290,121 @@ class ParentRecyclerAdapter extends RecyclerView.Adapter<ParentRecyclerAdapter.M
         childRecyclerAdapter.notifyDataSetChanged();
 
 
+        //delete button
+
+        holder.deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                // are you sure you want to delete
+                final String[] colors = {"Yes", "No"};
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setTitle("Are you sure you want to delete this Multitimer?");
+                builder.setItems(colors, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // the user clicked on colors[which]
+
+                        if (which==0){
+                            System.out.println("Delete it");
+
+                            //REFERENCE---------
+                            reference = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimer arraylist");
+
+                            multiTimerArrayListDel.remove(position);
+
+                            reference.setValue(multiTimerArrayListDel);
+
+                            notifyItemRemoved(position);
+
+
+
+                            Intent intent;
+                            intent = new Intent(holder.itemView.getContext(), LoggedInTotalDashboardActivity.class);
+
+                            context.startActivity(intent);
+
+                            Toast.makeText(holder.itemView.getContext(),"Multitimer deleted, create a new one",Toast.LENGTH_LONG).show();
+
+
+
+
+//                            //REFERENCE---------
+//                            reference = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimer arraylist");
+//
+//                            reference.addValueEventListener(new ValueEventListener() {
+//
+//
+//                                @Override
+//                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//
+//                                    //gets custom array list from db
+//                                    GenericTypeIndicator<ArrayList<MultiTimer>> t = new GenericTypeIndicator<ArrayList<MultiTimer>>() {};
+//
+//                                    yourMultitimerArrayDel = dataSnapshot.getValue(t);
+//                                    multiTimerArrayListDel.addAll(yourMultitimerArrayDel);
+//
+//                                    System.out.println("multiTimerArrayListDel size  " + multiTimerArrayListDel.size());
+//                                    multiTimerArrayListDel.remove(position);
+//
+//                                    reference.setValue(multiTimerArrayListDel);
+//
+//                                }
+//
+//                                @Override
+//                                public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                                }
+//                            });
+
+
+
+//                            if(count==0){
+//                                multiTimerArrayListDel.addAll(multiTimerArrayList);
+//                                count++;
+//
+//                                System.out.println("Count  "+ count); // 1
+//                                System.out.println("Size  "+ multiTimerArrayListDel.size()); // 8
+//                            }
+//
+//                            multiTimerArrayListDel.remove(position);
+//                            reference.setValue(multiTimerArrayListDel);
+
+
+                        }else{
+                            System.out.println("No");
+                            dialog.cancel();
+
+                        }
+
+                    }
+                });
+                builder.show();
+
+
+                //
+
+//                Intent intent;
+//                intent = new Intent(holder.itemView.getContext(), DeleteActivity.class);
+//
+//                intent.putExtra("MULTITIMER_ID",  multiTimerArrayList.get(position).getId());
+//                intent.putExtra("MULTITIMER_POSITION",  Integer.toString(position));
+//
+//                context.startActivity(intent);
+
+
+
+
+            }
+
+
+
+        });
+
+
     }
+
 
     @Override
     public int getItemCount() {
@@ -279,6 +416,7 @@ class ParentRecyclerAdapter extends RecyclerView.Adapter<ParentRecyclerAdapter.M
         TextView ItemName;
         TextView itemTotalTime;
         Button loadButton;
+        Button deleteButton;
         LinearLayout multitimerCard;
 
         RecyclerView ChildRV;
@@ -289,6 +427,7 @@ class ParentRecyclerAdapter extends RecyclerView.Adapter<ParentRecyclerAdapter.M
             ItemName = itemView.findViewById(R.id.stepname);
             itemTotalTime = itemView.findViewById(R.id.steptotaltime);
             loadButton = itemView.findViewById(R.id.loadBtn);
+            deleteButton = itemView.findViewById(R.id.deleteBtn);
             multitimerCard = itemView.findViewById(R.id.multitimercard);
 
             ChildRV = itemView.findViewById(R.id.ChildRV);

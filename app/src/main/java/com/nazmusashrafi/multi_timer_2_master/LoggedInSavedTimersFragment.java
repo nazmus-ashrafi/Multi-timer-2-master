@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -53,11 +54,14 @@ public class LoggedInSavedTimersFragment extends Fragment {
 
 
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_logged_in_saved_timers, container, false);
+
+
     }
 
     @Override
@@ -96,6 +100,7 @@ public class LoggedInSavedTimersFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
+
                 //gets custom array list from db
                 GenericTypeIndicator<ArrayList<MultiTimer>> t = new GenericTypeIndicator<ArrayList<MultiTimer>>() {};
 
@@ -103,15 +108,15 @@ public class LoggedInSavedTimersFragment extends Fragment {
 
                 if(yourMultitimerArray!=null){
 
-
                     //---- ---- ---
 
                     multiTimerArrayList.addAll(yourMultitimerArray);
 
                     for(int i=0;i<yourMultitimerArray.size();i++){
-                        multiTimerTitleArrayList.add(yourMultitimerArray.get(i).getTitle());
-                        multiTimerTotalTimeArrayList.add(yourMultitimerArray.get(i).getTotalTime());
-                        multiTimerColorArrayList.add((long) yourMultitimerArray.get(i).getSingleTimerArrayList().get(0).getColor());
+
+                            multiTimerTitleArrayList.add(yourMultitimerArray.get(i).getTitle());
+                            multiTimerTotalTimeArrayList.add(yourMultitimerArray.get(i).getTotalTime());
+                            multiTimerColorArrayList.add((long) yourMultitimerArray.get(i).getSingleTimerArrayList().get(0).getColor());
 
 
                     }
@@ -191,4 +196,6 @@ public class LoggedInSavedTimersFragment extends Fragment {
 
 
     }
+
+
 }

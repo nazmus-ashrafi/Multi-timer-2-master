@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relativeLayout3"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".DeleteActivity">
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvTimers"
+        android:layout_width="414dp"
+        android:layout_height="605dp"
+        app:layout_constraintBottom_toTopOf="@+id/footer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+
+    <TextView
+        android:id="@+id/totalTimeView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:text="Are you sure?"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/rvTimers"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <Button
+        android:id="@+id/removeBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="55dp"
+        android:layout_marginTop="44dp"
+        android:background="@drawable/bt_ui_readmore"
+        android:paddingLeft="30dp"
+
+        android:paddingRight="30dp"
+        android:text="Cancel"
+        android:textAllCaps="false"
+
+        android:textColor="@color/colorBackground"
+        android:textSize="22sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rvTimers" />
+
+    <Button
+        android:id="@+id/deleteBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="44dp"
+
+        android:background="@drawable/bt_ui_readmore"
+        android:paddingLeft="30dp"
+        android:paddingRight="30dp"
+        android:text="Delete"
+        android:textAllCaps="false"
+
+        android:textColor="@color/colorBackground"
+        android:textSize="22sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/removeBtn"
+        app:layout_constraintTop_toBottomOf="@+id/rvTimers" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

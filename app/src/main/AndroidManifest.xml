@@ -9,6 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".DeleteActivity"></activity>
         <activity android:name=".RunPageActivity" />
         <activity android:name=".BuildScreenActivity" />
         <activity android:name=".LoadBuildScreenActivity" />

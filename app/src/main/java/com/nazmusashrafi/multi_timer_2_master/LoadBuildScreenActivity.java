@@ -566,8 +566,7 @@ public class LoadBuildScreenActivity extends AppCompatActivity {
 
         //----
     }
-
-
+    
 
     private void editTask(final int position) {
 
