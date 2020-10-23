@@ -149,7 +149,13 @@ public class RunPageActivity extends AppCompatActivity {
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                timeLeft= (long) dataSnapshot.child("totalTime").getValue();
+                if(dataSnapshot.getValue()!=null){
+
+                    timeLeft = (long) dataSnapshot.child("totalTime").getValue();  //bug
+                    //maybe send to save page after save , and not go to run - in loadbuildscreen and  buildscreen
+
+                }
+
             }
 
             @Override

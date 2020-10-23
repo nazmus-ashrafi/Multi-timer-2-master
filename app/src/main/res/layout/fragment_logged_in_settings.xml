@@ -14,7 +14,7 @@
         android:id="@+id/emailInput"
         android:layout_width="350dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="150dp"
+        android:layout_marginTop="50dp"
         android:background="@drawable/input_bg"
         android:orientation="horizontal"
         android:weightSum="100"
@@ -50,15 +50,14 @@
 
     <LinearLayout
         android:id="@+id/soundInput"
-        android:layout_width="0dp"
+        android:layout_width="334dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="39dp"
-        android:layout_marginEnd="39dp"
-        android:layout_marginBottom="180dp"
+        android:layout_marginTop="83dp"
+        android:layout_marginBottom="200dp"
         android:background="@drawable/input_bg"
         android:orientation="horizontal"
         android:weightSum="100"
-        app:layout_constraintBottom_toTopOf="@+id/logOutButton"
+        app:layout_constraintBottom_toTopOf="@+id/saveButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/passwordInput">
@@ -112,17 +111,31 @@
             android:gravity="center" />
     </LinearLayout>
 
+    <!--    <Button-->
+    <!--        android:id="@+id/logOutButton"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_marginBottom="212dp"-->
+    <!--        android:background="@color/primaryButtonColor"-->
+    <!--        android:text="Log out"-->
+    <!--        android:textColor="@color/colorWhite"-->
+    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--        app:layout_constraintEnd_toEndOf="parent"-->
+    <!--        app:layout_constraintHorizontal_bias="0.498"-->
+    <!--        app:layout_constraintStart_toStartOf="parent"-->
+    <!--        app:layout_constraintTop_toBottomOf="@+id/textView"-->
+    <!--        app:layout_constraintVertical_bias="0.905" />-->
+
+
     <LinearLayout
         android:id="@+id/passwordInput"
         android:layout_width="350dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="240dp"
+        android:layout_marginTop="150dp"
         android:background="@drawable/input_bg"
         android:orientation="horizontal"
         android:weightSum="100"
-        app:layout_constraintBottom_toTopOf="@+id/logOutButton"
+        app:layout_constraintBottom_toTopOf="@+id/soundInput"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/emailInput">
@@ -151,55 +164,98 @@
 
     </LinearLayout>
 
-    <!--    <Button-->
-    <!--        android:id="@+id/logOutButton"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_marginBottom="212dp"-->
-    <!--        android:background="@color/primaryButtonColor"-->
-    <!--        android:text="Log out"-->
-    <!--        android:textColor="@color/colorWhite"-->
-    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--        app:layout_constraintEnd_toEndOf="parent"-->
-    <!--        app:layout_constraintHorizontal_bias="0.498"-->
-    <!--        app:layout_constraintStart_toStartOf="parent"-->
-    <!--        app:layout_constraintTop_toBottomOf="@+id/textView"-->
-    <!--        app:layout_constraintVertical_bias="0.905" />-->
+    <LinearLayout
+        android:id="@+id/nameInput"
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="62dp"
+        android:background="@drawable/input_bg"
+        android:orientation="horizontal"
+        android:weightSum="100"
+        app:layout_constraintBottom_toTopOf="@+id/soundInput"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/emailInput">
 
+        <ImageView
+            android:id="@+id/imageViewEnvelop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="25"
+            app:srcCompat="@drawable/icon_key"
+            tools:ignore="DuplicateIds" />
+
+        <EditText
+            android:id="@+id/editTextTextName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="75"
+            android:background="@drawable/input_bg"
+            android:ems="10"
+            android:fontFamily="@font/montserrat"
+            android:hint="Enter Name..."
+            android:padding="16dp"
+
+            />
+
+    </LinearLayout>
 
     <Button
         android:id="@+id/saveButton"
         android:layout_width="347dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
+        android:layout_marginBottom="270dp"
         android:background="@drawable/primary_btn_bg"
         android:fontFamily="@font/montserrat_bold"
         android:text="Save"
         android:textAllCaps="false"
         android:textColor="#F6F6F6"
         android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@+id/logOutButton"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/soundInput" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/logOutButton"
-        android:layout_width="0dp"
+        android:layout_width="347dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="50dp"
         android:background="@drawable/primary_btn_bg"
         android:fontFamily="@font/montserrat_bold"
         android:text="Log out"
         android:textAllCaps="false"
         android:textColor="#F6F6F6"
         android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/deleteAccountButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/saveButton" />
+
+    <Button
+        android:id="@+id/deleteAccountButton"
+        android:layout_width="347dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="120dp"
+        android:background="@drawable/primary_btn_bg"
+        android:fontFamily="@font/montserrat_bold"
+        android:text="Delete account"
+        android:textAllCaps="false"
+        android:textColor="#F6F6F6"
+        android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/progressBarSettingsPage"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminateTint="@android:color/background_light"
+        app:layout_constraintBottom_toTopOf="@+id/soundInput"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/passwordInput" />
 

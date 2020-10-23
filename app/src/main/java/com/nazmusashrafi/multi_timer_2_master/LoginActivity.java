@@ -26,6 +26,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText loginEmail, loginPwd;
     private Button loginBtn;
     private TextView loginQn;
+    private TextView loginForgotPassword;
     private TextView loginSkip;
 
     private FirebaseAuth mAuth;
@@ -45,7 +46,8 @@ public class LoginActivity extends AppCompatActivity {
         loginEmail = findViewById(R.id.editTextTextEmailAddress);
         loginPwd = findViewById(R.id.editTextTextPassword);
         loginBtn = (Button) findViewById(R.id.buttonLogin);
-        loginQn = findViewById(R.id.textViewCreateNewAccount);
+        loginQn = findViewById(R.id.textViewCreateNewAccount); //create new account
+        loginForgotPassword = findViewById(R.id.textViewForgotPassword); //forgot password
         loginSkip = findViewById(R.id.textViewSkip);
         progressBar = findViewById(R.id.progressBarLogin);
         mAuth = FirebaseAuth.getInstance();
@@ -60,6 +62,17 @@ public class LoginActivity extends AppCompatActivity {
 
             }
         });
+
+        loginForgotPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intent = new Intent(LoginActivity.this,ForgotPasswordActivity.class);
+                startActivity(intent);
+
+            }
+        });
+
 
         loginSkip.setOnClickListener(new View.OnClickListener() {
             @Override

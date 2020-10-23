@@ -225,7 +225,7 @@ public class BuildScreenActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if(task.isSuccessful()){
-                                    Toast.makeText(BuildScreenActivity.this,"Multi-timer saved",Toast.LENGTH_LONG).show();
+                                    Toast.makeText(BuildScreenActivity.this,"Multi-timer saved in saved timers",Toast.LENGTH_LONG).show();
 
                                 }
 
@@ -235,7 +235,7 @@ public class BuildScreenActivity extends AppCompatActivity {
                         //goto run page
 
                         Intent intent;
-                        intent = new Intent(BuildScreenActivity.this, RunPageActivity.class);
+                        intent = new Intent(BuildScreenActivity.this, LoggedInTotalDashboardActivity.class);
                         System.out.println(id);
                         intent.putExtra("id", id);
 //                            intent.putExtra("view",layoutManager)

@@ -199,7 +199,6 @@ public class LoadBuildScreenActivity extends AppCompatActivity {
                         }
 
 
-
                     }
 
                     @Override
@@ -252,9 +251,8 @@ public class LoadBuildScreenActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if(task.isSuccessful()){
-                                    Toast.makeText(LoadBuildScreenActivity.this,"Multi-timer saved",Toast.LENGTH_LONG).show();
+                                    Toast.makeText(LoadBuildScreenActivity.this,"Multi-timer saved in saved timers",Toast.LENGTH_LONG).show();
                                     //notify change in parent recycler adapter
-
 
                                 }
 
@@ -264,7 +262,7 @@ public class LoadBuildScreenActivity extends AppCompatActivity {
                         //goto run page
 
                         Intent intent;
-                        intent = new Intent(LoadBuildScreenActivity.this, RunPageActivity.class);
+                        intent = new Intent(LoadBuildScreenActivity.this, LoggedInTotalDashboardActivity.class);
                         System.out.println(id);
                         intent.putExtra("id", id);
 //                            intent.putExtra("view",layoutManager)

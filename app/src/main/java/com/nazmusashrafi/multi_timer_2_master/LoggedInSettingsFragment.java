@@ -1,9 +1,11 @@
 package com.nazmusashrafi.multi_timer_2_master;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import android.text.TextUtils;
@@ -17,6 +19,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,6 +48,7 @@ public class LoggedInSettingsFragment extends Fragment implements AdapterView.On
 
     private Spinner spinnerSoundSelector;
 
+
     String valueFromSpinner;
 
 
@@ -67,12 +71,17 @@ public class LoggedInSettingsFragment extends Fragment implements AdapterView.On
 
         Button logoutButton = (Button) view.findViewById(R.id.logOutButton);
         Button saveButton = (Button) view.findViewById(R.id.saveButton);
+        Button deleteAccountButton = (Button) view.findViewById(R.id.deleteAccountButton);
 
         final LinearLayout emailTextView = view.findViewById(R.id.emailInput);
         final LinearLayout passwordTextView = view.findViewById(R.id.passwordInput);
+        final LinearLayout nameTextView = view.findViewById(R.id.nameInput);
+        final LinearLayout soundSpinnerView = view.findViewById(R.id.soundInput);
 
         final EditText mEmailText = view.findViewById(R.id.editTextTextEmailAddress);
         final EditText mPasswordText = view.findViewById(R.id.editTextTextPassword);
+        final EditText mNameText = view.findViewById(R.id.editTextTextName);
+        final ProgressBar progressBar = view.findViewById(R.id.progressBarSettingsPage);
 
         //sound-----
         spinnerSoundSelector = view.findViewById(R.id.spinnerSoundSelector); //spinnerTextSize
@@ -87,6 +96,10 @@ public class LoggedInSettingsFragment extends Fragment implements AdapterView.On
         spinnerSoundSelector.setAdapter(adapter);
 
         spinnerSoundSelector.setVisibility(View.INVISIBLE);
+
+
+        //------
+
 
 
         //
@@ -112,7 +125,7 @@ public class LoggedInSettingsFragment extends Fragment implements AdapterView.On
                     }else if(dataSnapshot.getValue().equals("Chilled")){
                         spinnerSoundSelector.setSelection(3);
                     }else if(dataSnapshot.getValue().equals("Soft")){
-                        spinnerSoundSelector.setSelection(4,true);
+                        spinnerSoundSelector.setSelection(4);
                     }
                 }
 
@@ -125,13 +138,22 @@ public class LoggedInSettingsFragment extends Fragment implements AdapterView.On
             }
         });
 
-        //----------------
 
+        //----------------
 
         //if anym
         if(mUser.isAnonymous()){
 
-            logoutButton.setText("Link this account"); // sign up
+            progressBar.setVisibility(View.INVISIBLE);
+
+            //layout changes
+            logoutButton.setText("Link this account"); // sign up to link account
+            nameTextView.setVisibility(View.INVISIBLE); //enter name to invisible
+            saveButton.setVisibility(View.INVISIBLE); //save button to invisible
+            soundSpinnerView.setVisibility(View.INVISIBLE); //sound chooser to invisible
+            deleteAccountButton.setVisibility(View.INVISIBLE);//delete account to invisible
+
+            //-----------------
 
             logoutButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -255,13 +277,42 @@ public class LoggedInSettingsFragment extends Fragment implements AdapterView.On
             });
 
 
-        }else{
+        }else{ //if not anym
 
             //
 
-            mEmailText.setText(mUser.getEmail());
+//            mEmailText.setText(mUser.getEmail());
+
+            //layout changes
+
+            emailTextView.setVisibility(View.INVISIBLE); //enter email to invisible
+            passwordTextView.setVisibility(View.INVISIBLE); //enter passowrd to invisible
+
+            //---------
 
             passwordTextView.setVisibility(View.INVISIBLE);
+
+
+            reference.child(onlineUserID).child("name").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                    if(dataSnapshot.getValue()==null){
+                        progressBar.setVisibility(View.VISIBLE);
+                        mNameText.setText("");
+
+                    }else{
+                        progressBar.setVisibility(View.INVISIBLE);
+                        mNameText.setText(dataSnapshot.getValue().toString());
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
 
             view.findViewById(R.id.logOutButton).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -290,19 +341,110 @@ public class LoggedInSettingsFragment extends Fragment implements AdapterView.On
                 }
             });
 
+
+            //Save button
             saveButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     System.out.println(valueFromSpinner);
+
                     //push valueFromSpinner to db
                     FirebaseDatabase.getInstance().getReference("Users")
                             .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                             .child("sound")
                             .setValue(valueFromSpinner);
+
+                    //---
+
+                    //push email to db
+                    FirebaseDatabase.getInstance().getReference("Users")
+                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                            .child("name")
+                            .setValue(mNameText.getText().toString());
+
+                    //---
                 }
             });
 
         }
+
+
+        //delete account button
+
+        deleteAccountButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                // are you sure you want to delete
+                final String[] colors = {"Yes", "No"};
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Are you sure?");
+                builder.setMessage("Deleting the account will result in completely removing your account from the system.");
+
+                builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // the user clicked on colors[which]
+
+                        progressBar.setVisibility(View.VISIBLE);
+
+
+                            System.out.println("Delete account");
+
+
+                            //delete from authentication
+                            mUser.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+
+                                    progressBar.setVisibility(View.GONE);
+
+                                    if(task.isSuccessful()){
+
+                                        //delete info from firebase
+                                        //REFERENCE---------
+                                        reference = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID);
+
+                                        reference.removeValue();
+
+                                        //-----
+
+                                        Intent intent;
+                                        intent = new Intent(getActivity(), LoginActivity.class);
+
+                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+                                        getActivity().startActivity(intent);
+
+                                        Toast.makeText(getActivity(),"Your account has been deleted",Toast.LENGTH_LONG).show();
+
+
+                                    }else{
+                                        Toast.makeText(getActivity(),task.getException().getMessage(),Toast.LENGTH_LONG).show();
+                                    }
+
+                                }
+                            });
+
+
+                    }
+                });
+
+                builder.setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    System.out.println("No");
+                    dialogInterface.dismiss();
+
+                }
+            });
+                builder.show();
+
+            }
+        });
+
 
 
     }
@@ -320,20 +462,6 @@ public class LoggedInSettingsFragment extends Fragment implements AdapterView.On
     @Override
     public void onNothingSelected(final AdapterView<?> adapterView) {
 
-        //get value of sound from db and set as
-
-        reference.child(onlineUserID).child("sound").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
 
     }
 }

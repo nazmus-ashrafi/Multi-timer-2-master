@@ -299,6 +299,7 @@ class ParentRecyclerAdapter extends RecyclerView.Adapter<ParentRecyclerAdapter.M
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setTitle("Are you sure you want to delete this Multitimer?");
+
                 builder.setItems(colors, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
