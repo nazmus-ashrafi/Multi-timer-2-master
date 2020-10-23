@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="sound_selections">
+        <item>Bell</item>
+        <item>Gear</item>
+        <item>Batman</item>
+        <item>Chilled</item>
+        <item>Soft</item>
+    </string-array>
+</resources>

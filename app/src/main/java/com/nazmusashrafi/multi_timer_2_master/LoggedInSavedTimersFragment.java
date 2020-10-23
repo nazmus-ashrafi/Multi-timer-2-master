@@ -71,7 +71,10 @@ public class LoggedInSavedTimersFragment extends Fragment {
         //Firebase declarations
         mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
-        onlineUserID = mUser.getUid();
+
+        if(mUser!=null){
+            onlineUserID = mUser.getUid();
+        }
 
 
         recyclerView = (RecyclerView) view.findViewById(R.id.ParentRv);

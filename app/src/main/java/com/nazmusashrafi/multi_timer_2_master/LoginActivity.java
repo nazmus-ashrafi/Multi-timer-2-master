@@ -31,6 +31,8 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private ProgressBar progressBar;
 
+    private FirebaseUser mCurrentUserAnym;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +50,8 @@ public class LoginActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBarLogin);
         mAuth = FirebaseAuth.getInstance();
 
+        mCurrentUserAnym = mAuth.getCurrentUser();
+
 
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,8 +64,45 @@ public class LoginActivity extends AppCompatActivity {
         loginSkip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(LoginActivity.this,LoggedInTotalDashboardActivity.class);
-                startActivity(intent);
+//                Intent intent = new Intent(LoginActivity.this,LoggedInTotalDashboardActivity.class);
+//                startActivity(intent);
+
+
+                //get intent from loggedinsettings fragment with mUser, then set mUser to mCurrentUserAnym
+
+
+                //6:18
+                if(mCurrentUserAnym == null){  //|| !mCurrentUserAnym.isEmailVerified()
+                    progressBar.setVisibility(View.VISIBLE);
+
+
+                    mAuth.signInAnonymously().addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if(task.isSuccessful()){
+
+                                System.out.println("logged in anym with id " );
+
+                                Intent intent = new Intent(LoginActivity.this,LoggedInTotalDashboardActivity.class);
+                                startActivity(intent);
+
+                            }else{
+                                Toast.makeText(LoginActivity.this,"Error skipping login page",Toast.LENGTH_LONG).show();
+                            }
+
+
+                            progressBar.setVisibility(View.INVISIBLE);
+                        }
+                    });
+
+                }else{
+
+                    Intent intent = new Intent(LoginActivity.this,LoggedInTotalDashboardActivity.class);
+                    startActivity(intent);
+
+                }
+
+
             }
         });
 
@@ -131,13 +172,12 @@ public class LoginActivity extends AppCompatActivity {
 
                     }else{
                         user.sendEmailVerification();
+
+                        FirebaseAuth.getInstance().signOut();
+
                         Toast.makeText(LoginActivity.this,"Check your email to verify your account",Toast.LENGTH_LONG).show();
 
                     }
-
-
-
-
 
 
                 }else{

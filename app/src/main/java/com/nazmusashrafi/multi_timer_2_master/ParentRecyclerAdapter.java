@@ -258,7 +258,7 @@ class ParentRecyclerAdapter extends RecyclerView.Adapter<ParentRecyclerAdapter.M
 
         for(int i=0;i<multiTimerArrayList.size();i++){
 
-            if(position!=multiTimerArrayList.size()){ //
+            if(!(position >= multiTimerArrayList.size())){ //
 
                 if(multiTimerArrayList.get(position).equals(multiTimerArrayList.get(i))){
 
@@ -276,8 +276,6 @@ class ParentRecyclerAdapter extends RecyclerView.Adapter<ParentRecyclerAdapter.M
                 }
 
             }
-
-
 
 
 

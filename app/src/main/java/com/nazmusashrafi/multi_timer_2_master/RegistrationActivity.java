@@ -129,6 +129,12 @@ public class RegistrationActivity extends AppCompatActivity {
 
                                 }
                             });
+
+                            //sounds initialization
+                            FirebaseDatabase.getInstance().getReference("Users")
+                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                    .child("sound")
+                                    .setValue("bell");
                         }else{
                             try {
                                 Toast.makeText(RegistrationActivity.this,"Failed to register, try again",Toast.LENGTH_LONG).show();
