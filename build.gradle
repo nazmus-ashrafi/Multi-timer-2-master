@@ -24,3 +24,11 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+//.sourceSets {
+//    main {
+//
+//        assets.srcDirs = ['/res/raw']
+//
+//    }
+//}

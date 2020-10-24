@@ -81,7 +81,8 @@
         app:layout_constraintBottom_toTopOf="@+id/rvTimers"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="invisible"/>
 
 
     <Button
@@ -216,6 +217,19 @@
         app:layout_constraintStart_toStartOf="@+id/timerProgress"
         app:layout_constraintTop_toTopOf="@+id/timerProgress"
         app:layout_constraintVertical_bias="0.447" />
+
+    <TextView
+        android:id="@+id/swipe_to_show_cards_text"
+        android:visibility="invisible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Swipe here to show cards"
+        app:layout_constraintBottom_toBottomOf="@+id/rvTimers"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/rvTimers"
+        app:layout_constraintTop_toTopOf="@+id/rvTimers"
+        android:textColor="@color/footerBlue"
+        android:textSize="22dp"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

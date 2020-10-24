@@ -296,9 +296,10 @@ public class LoggedInSettingsFragment extends Fragment implements AdapterView.On
             reference.child(onlineUserID).child("name").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    progressBar.setVisibility(View.VISIBLE);
 
                     if(dataSnapshot.getValue()==null){
-                        progressBar.setVisibility(View.VISIBLE);
+                        reference.child(onlineUserID).child("name").setValue("");
                         mNameText.setText("");
 
                     }else{
@@ -348,11 +349,22 @@ public class LoggedInSettingsFragment extends Fragment implements AdapterView.On
                 public void onClick(View view) {
                     System.out.println(valueFromSpinner);
 
+                    progressBar.setVisibility(View.VISIBLE);
+
                     //push valueFromSpinner to db
                     FirebaseDatabase.getInstance().getReference("Users")
                             .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                             .child("sound")
-                            .setValue(valueFromSpinner);
+                            .setValue(valueFromSpinner).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(task.isSuccessful()){
+                                progressBar.setVisibility(View.INVISIBLE);
+
+                                Toast.makeText(getActivity(),"Settings saved",Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    });
 
                     //---
 
@@ -360,7 +372,16 @@ public class LoggedInSettingsFragment extends Fragment implements AdapterView.On
                     FirebaseDatabase.getInstance().getReference("Users")
                             .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                             .child("name")
-                            .setValue(mNameText.getText().toString());
+                            .setValue(mNameText.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(task.isSuccessful()){
+                                progressBar.setVisibility(View.INVISIBLE);
+
+                                Toast.makeText(getActivity(),"Settings saved",Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    });
 
                     //---
                 }

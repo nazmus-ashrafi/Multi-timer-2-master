@@ -15,6 +15,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -74,6 +75,7 @@ public class LoadRunPageActivity extends AppCompatActivity {
     private boolean timerRunning;
     private long timeLeft;
     private Dialog customDialog;
+    private String currentSound;
 
     private boolean timerStarted = false;
 
@@ -100,6 +102,13 @@ public class LoadRunPageActivity extends AppCompatActivity {
     int counter =0;
     long millis =0;
 
+    //sounds
+    MediaPlayer bellSound;
+    MediaPlayer chilledSound;
+    MediaPlayer softSound;
+    MediaPlayer gearSound;
+    MediaPlayer batmanSound;
+
 
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -108,6 +117,13 @@ public class LoadRunPageActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_run_page);
+
+        //sounds
+        bellSound = MediaPlayer.create(this, R.raw.bell);
+        chilledSound = MediaPlayer.create(this, R.raw.chilled);
+        softSound = MediaPlayer.create(this, R.raw.soft);
+        gearSound = MediaPlayer.create(this, R.raw.gear);
+        batmanSound = MediaPlayer.create(this, R.raw.batman);
 
         //Buttons and text view declaration
         Button addTimer = (Button) findViewById(R.id.btReset);
@@ -141,6 +157,26 @@ public class LoadRunPageActivity extends AppCompatActivity {
 
         //        recycler view animation
         recyclerViewAnimation();
+
+        //get current sound
+        FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("sound").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.getValue()!=null){
+
+                    currentSound = dataSnapshot.getValue().toString();
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        //-------------
 
 
         reference.addValueEventListener(new ValueEventListener() {
@@ -523,18 +559,24 @@ public class LoadRunPageActivity extends AppCompatActivity {
             }
         });
 
-        //
+        // SWIPE HERE TO SHOW CHART
 
         pieChart = (PieChart) findViewById(R.id.pieChart);
-        pieChart.setNoDataText("Tap to show chart");
+        pieChart.setNoDataText("Swipe here to show chart");
         Paint p = pieChart.getPaint(Chart.PAINT_INFO);
         p.setColor(ContextCompat.getColor(this,
                 R.color.footerBlue));
 
-        p.setTextSize(45);
+        p.setTextSize(35);
 //        p.setTypeface(...);
 
         //---- ---------- --------
+
+        // SWIPE HERE TO SHOW CARDS
+
+//        if(singleTimer.isEmpty()){
+//            swipeToShowCardText.setVisibility(View.VISIBLE);
+//        }
 
 
 
@@ -763,7 +805,25 @@ public class LoadRunPageActivity extends AppCompatActivity {
                 timerProgress.setVisibility(View.INVISIBLE);
 
                 if(counter<timesUni.size()){
+
+                    // sounds
                     System.out.println("Bing");
+
+                    System.out.println("current sound is: "+ currentSound);
+
+                    if(currentSound.equals("Batman")){
+                        batmanSound.start();
+                    }else if(currentSound.equals("Chilled")){
+                        chilledSound.start();
+                    }else if(currentSound.equals("Soft")){
+                        softSound.start();
+                    }else if(currentSound.equals("Gear")){
+                        gearSound.start();
+                    }else if(currentSound.equals("Bell")){
+                        bellSound.start();
+                    }
+
+                    //---
                     //bell, move recyclerview ,change ring color,change (step 1) text in ring
                     // redo lower button placement
 
@@ -784,6 +844,23 @@ public class LoadRunPageActivity extends AppCompatActivity {
 
                 if(counter == timesUni.size()){
                     System.out.println("Bing Ping");
+                    // sounds
+
+                    System.out.println("current sound is: "+ currentSound);
+
+                    if(currentSound.equals("Batman")){
+                        batmanSound.start();
+                    }else if(currentSound.equals("Chilled")){
+                        chilledSound.start();
+                    }else if(currentSound.equals("Soft")){
+                        softSound.start();
+                    }else if(currentSound.equals("Gear")){
+                        gearSound.start();
+                    }else if(currentSound.equals("Bell")){
+                        bellSound.start();
+                    }
+
+                    //---
 
                     //
                     timerProgress.setProgress(100);
@@ -909,10 +986,151 @@ public class LoadRunPageActivity extends AppCompatActivity {
 
 //        dataSet.setColors(new int[] {2131034167, R.color.cardColorCreamH, R.color.cardColorGrapeL, R.color.cardColor1 }, this);
 
+        System.out.println("this is the arrayColors.length : "+ arrayColors.length);
         if(singleTimer.size()==2){
             dataSet.setColors(new int[] {arrayColors[0],arrayColors[1]}, this);
         }else if(singleTimer.size()==3){
             dataSet.setColors(new int[] {arrayColors[0],arrayColors[1],arrayColors[2]}, this);
+        }else if(singleTimer.size()==4){
+            dataSet.setColors(new int[] {arrayColors[0],arrayColors[1],arrayColors[2],arrayColors[3]}, this);
+        }else if(singleTimer.size()==5){
+            dataSet.setColors(new int[] {arrayColors[0],arrayColors[1],arrayColors[2],arrayColors[3],arrayColors[4]}, this);
+        }else if(singleTimer.size()==6){
+            dataSet.setColors(new int[] {arrayColors[0],arrayColors[1],arrayColors[2],arrayColors[3],
+                    arrayColors[4],arrayColors[5]}, this);
+        }else if(singleTimer.size()==7){
+            dataSet.setColors(new int[] {arrayColors[0],arrayColors[1],arrayColors[2],arrayColors[3],
+                    arrayColors[4],arrayColors[5],arrayColors[6]}, this);
+        }else if(singleTimer.size()==8){
+            dataSet.setColors(new int[] {arrayColors[0],arrayColors[1],arrayColors[2],arrayColors[3],
+                    arrayColors[4],arrayColors[5],arrayColors[6],arrayColors[7]}, this);
+        }else if(singleTimer.size()==9){
+            dataSet.setColors(new int[] {arrayColors[0],arrayColors[1],arrayColors[2],arrayColors[3],
+                    arrayColors[4],arrayColors[5],arrayColors[6],arrayColors[7],arrayColors[8]}, this);
+        }else if(singleTimer.size()==10){
+            dataSet.setColors(new int[] {arrayColors[0],arrayColors[1],arrayColors[2],arrayColors[3],
+                    arrayColors[4],arrayColors[5],arrayColors[6],arrayColors[7],arrayColors[8],arrayColors[9]}, this);
+        }else if(singleTimer.size()==11){
+            dataSet.setColors(new int[] {arrayColors[0],arrayColors[1],arrayColors[2],arrayColors[3],
+                    arrayColors[4],arrayColors[5],arrayColors[6],arrayColors[7],arrayColors[8],arrayColors[9]
+                    ,arrayColors[10]}, this);
+        }else if(singleTimer.size()==12){
+            dataSet.setColors(new int[] {arrayColors[0],arrayColors[1],arrayColors[2],arrayColors[3],
+                    arrayColors[4],arrayColors[5],arrayColors[6],arrayColors[7],arrayColors[8],arrayColors[9]
+                    ,arrayColors[10],arrayColors[11]}, this);
+        }else if(singleTimer.size()==13){
+            dataSet.setColors(new int[] {arrayColors[0],arrayColors[1],arrayColors[2],arrayColors[3],
+                    arrayColors[4],arrayColors[5],arrayColors[6],arrayColors[7],arrayColors[8],arrayColors[9]
+                    ,arrayColors[10],arrayColors[11],arrayColors[12]}, this);
+        }else if(singleTimer.size()==14){
+            dataSet.setColors(new int[] {arrayColors[0],arrayColors[1],arrayColors[2],arrayColors[3],
+                    arrayColors[4],arrayColors[5],arrayColors[6],arrayColors[7],arrayColors[8],arrayColors[9]
+                    ,arrayColors[10],arrayColors[11],arrayColors[12],arrayColors[13]}, this);
+        }else if(singleTimer.size()==15){
+            dataSet.setColors(new int[] {arrayColors[0],arrayColors[1],arrayColors[2],arrayColors[3],
+                    arrayColors[4],arrayColors[5],arrayColors[6],arrayColors[7],arrayColors[8],arrayColors[9]
+                    ,arrayColors[10],arrayColors[11],arrayColors[12],arrayColors[13],arrayColors[14]}, this);
+        }else if(singleTimer.size()==16){
+            dataSet.setColors(new int[] {arrayColors[0],arrayColors[1],arrayColors[2],arrayColors[3],
+                    arrayColors[4],arrayColors[5],arrayColors[6],arrayColors[7],arrayColors[8],arrayColors[9]
+                    ,arrayColors[10],arrayColors[11],arrayColors[12],arrayColors[13],arrayColors[14],arrayColors[15]}, this);
+        }else if(singleTimer.size()==17){
+            dataSet.setColors(new int[] {arrayColors[0],arrayColors[1],arrayColors[2],arrayColors[3],
+                    arrayColors[4],arrayColors[5],arrayColors[6],arrayColors[7],arrayColors[8],arrayColors[9]
+                    ,arrayColors[10],arrayColors[11],arrayColors[12],arrayColors[13],arrayColors[14],arrayColors[15]
+                    ,arrayColors[16]}, this);
+        }else if(singleTimer.size()==18){
+            dataSet.setColors(new int[] {arrayColors[0],arrayColors[1],arrayColors[2],arrayColors[3],
+                    arrayColors[4],arrayColors[5],arrayColors[6],arrayColors[7],arrayColors[8],arrayColors[9]
+                    ,arrayColors[10],arrayColors[11],arrayColors[12],arrayColors[13],arrayColors[14],arrayColors[15]
+                    ,arrayColors[16],arrayColors[17]}, this);
+        }else if(singleTimer.size()==19){
+            dataSet.setColors(new int[] {arrayColors[0],arrayColors[1],arrayColors[2],arrayColors[3],
+                    arrayColors[4],arrayColors[5],arrayColors[6],arrayColors[7],arrayColors[8],arrayColors[9]
+                    ,arrayColors[10],arrayColors[11],arrayColors[12],arrayColors[13],arrayColors[14],arrayColors[15]
+                    ,arrayColors[16],arrayColors[17],arrayColors[18]}, this);
+        }else if(singleTimer.size()==20){
+            dataSet.setColors(new int[] {arrayColors[0],arrayColors[1],arrayColors[2],arrayColors[3],
+                    arrayColors[4],arrayColors[5],arrayColors[6],arrayColors[7],arrayColors[8],arrayColors[9]
+                    ,arrayColors[10],arrayColors[11],arrayColors[12],arrayColors[13],arrayColors[14],arrayColors[15]
+                    ,arrayColors[16],arrayColors[17],arrayColors[18],arrayColors[19]}, this);
+        }else if(singleTimer.size()==21){
+            dataSet.setColors(new int[] {arrayColors[0],arrayColors[1],arrayColors[2],arrayColors[3],
+                    arrayColors[4],arrayColors[5],arrayColors[6],arrayColors[7],arrayColors[8],arrayColors[9]
+                    ,arrayColors[10],arrayColors[11],arrayColors[12],arrayColors[13],arrayColors[14],arrayColors[15]
+                    ,arrayColors[16],arrayColors[17],arrayColors[18],arrayColors[19],arrayColors[20]}, this);
+        }else if(singleTimer.size()==22){
+            dataSet.setColors(new int[] {arrayColors[0],arrayColors[1],arrayColors[2],arrayColors[3],
+                    arrayColors[4],arrayColors[5],arrayColors[6],arrayColors[7],arrayColors[8],arrayColors[9]
+                    ,arrayColors[10],arrayColors[11],arrayColors[12],arrayColors[13],arrayColors[14],arrayColors[15]
+                    ,arrayColors[16],arrayColors[17],arrayColors[18],arrayColors[19],arrayColors[20],
+                    arrayColors[21]}, this);
+        }else if(singleTimer.size()==23){
+            dataSet.setColors(new int[] {arrayColors[0],arrayColors[1],arrayColors[2],arrayColors[3],
+                    arrayColors[4],arrayColors[5],arrayColors[6],arrayColors[7],arrayColors[8],arrayColors[9]
+                    ,arrayColors[10],arrayColors[11],arrayColors[12],arrayColors[13],arrayColors[14],arrayColors[15]
+                    ,arrayColors[16],arrayColors[17],arrayColors[18],arrayColors[19],arrayColors[20]
+                    ,arrayColors[21],arrayColors[22]}, this);
+        }else if(singleTimer.size()==24){
+            dataSet.setColors(new int[] {arrayColors[0],arrayColors[1],arrayColors[2],arrayColors[3],
+                    arrayColors[4],arrayColors[5],arrayColors[6],arrayColors[7],arrayColors[8],arrayColors[9]
+                    ,arrayColors[10],arrayColors[11],arrayColors[12],arrayColors[13],arrayColors[14],arrayColors[15]
+                    ,arrayColors[16],arrayColors[17],arrayColors[18],arrayColors[19],arrayColors[20]
+                    ,arrayColors[21],arrayColors[22],arrayColors[23]}, this);
+        }else if(singleTimer.size()==25){
+            dataSet.setColors(new int[] {arrayColors[0],arrayColors[1],arrayColors[2],arrayColors[3],
+                    arrayColors[4],arrayColors[5],arrayColors[6],arrayColors[7],arrayColors[8],arrayColors[9]
+                    ,arrayColors[10],arrayColors[11],arrayColors[12],arrayColors[13],arrayColors[14],arrayColors[15]
+                    ,arrayColors[16],arrayColors[17],arrayColors[18],arrayColors[19],arrayColors[20]
+                    ,arrayColors[21],arrayColors[22],arrayColors[23],arrayColors[24]}, this);
+        }else if(singleTimer.size()==26){
+            dataSet.setColors(new int[] {arrayColors[0],arrayColors[1],arrayColors[2],arrayColors[3],
+                    arrayColors[4],arrayColors[5],arrayColors[6],arrayColors[7],arrayColors[8],arrayColors[9]
+                    ,arrayColors[10],arrayColors[11],arrayColors[12],arrayColors[13],arrayColors[14],arrayColors[15]
+                    ,arrayColors[16],arrayColors[17],arrayColors[18],arrayColors[19],arrayColors[20]
+                    ,arrayColors[21],arrayColors[22],arrayColors[23],arrayColors[24],arrayColors[25]}, this);
+        }else if(singleTimer.size()==27){
+            dataSet.setColors(new int[] {arrayColors[0],arrayColors[1],arrayColors[2],arrayColors[3],
+                    arrayColors[4],arrayColors[5],arrayColors[6],arrayColors[7],arrayColors[8],arrayColors[9]
+                    ,arrayColors[10],arrayColors[11],arrayColors[12],arrayColors[13],arrayColors[14],arrayColors[15]
+                    ,arrayColors[16],arrayColors[17],arrayColors[18],arrayColors[19],arrayColors[20]
+                    ,arrayColors[21],arrayColors[22],arrayColors[23],arrayColors[24],arrayColors[25]
+                    ,arrayColors[26]}, this);
+        }else if(singleTimer.size()==28){
+            dataSet.setColors(new int[] {arrayColors[0],arrayColors[1],arrayColors[2],arrayColors[3],
+                    arrayColors[4],arrayColors[5],arrayColors[6],arrayColors[7],arrayColors[8],arrayColors[9]
+                    ,arrayColors[10],arrayColors[11],arrayColors[12],arrayColors[13],arrayColors[14],arrayColors[15]
+                    ,arrayColors[16],arrayColors[17],arrayColors[18],arrayColors[19],arrayColors[20]
+                    ,arrayColors[21],arrayColors[22],arrayColors[23],arrayColors[24],arrayColors[25]
+                    ,arrayColors[26],arrayColors[27]}, this);
+        }else if(singleTimer.size()==29){
+            dataSet.setColors(new int[] {arrayColors[0],arrayColors[1],arrayColors[2],arrayColors[3],
+                    arrayColors[4],arrayColors[5],arrayColors[6],arrayColors[7],arrayColors[8],arrayColors[9]
+                    ,arrayColors[10],arrayColors[11],arrayColors[12],arrayColors[13],arrayColors[14],arrayColors[15]
+                    ,arrayColors[16],arrayColors[17],arrayColors[18],arrayColors[19],arrayColors[20]
+                    ,arrayColors[21],arrayColors[22],arrayColors[23],arrayColors[24],arrayColors[25]
+                    ,arrayColors[26],arrayColors[27],arrayColors[28]}, this);
+        }else if(singleTimer.size()==30){
+            dataSet.setColors(new int[] {arrayColors[0],arrayColors[1],arrayColors[2],arrayColors[3],
+                    arrayColors[4],arrayColors[5],arrayColors[6],arrayColors[7],arrayColors[8],arrayColors[9]
+                    ,arrayColors[10],arrayColors[11],arrayColors[12],arrayColors[13],arrayColors[14],arrayColors[15]
+                    ,arrayColors[16],arrayColors[17],arrayColors[18],arrayColors[19],arrayColors[20]
+                    ,arrayColors[21],arrayColors[22],arrayColors[23],arrayColors[24],arrayColors[25]
+                    ,arrayColors[26],arrayColors[27],arrayColors[28],arrayColors[29]}, this);
+        }else if(singleTimer.size()==31){
+            dataSet.setColors(new int[] {arrayColors[0],arrayColors[1],arrayColors[2],arrayColors[3],
+                    arrayColors[4],arrayColors[5],arrayColors[6],arrayColors[7],arrayColors[8],arrayColors[9]
+                    ,arrayColors[10],arrayColors[11],arrayColors[12],arrayColors[13],arrayColors[14],arrayColors[15]
+                    ,arrayColors[16],arrayColors[17],arrayColors[18],arrayColors[19],arrayColors[20]
+                    ,arrayColors[21],arrayColors[22],arrayColors[23],arrayColors[24],arrayColors[25]
+                    ,arrayColors[26],arrayColors[27],arrayColors[28],arrayColors[29],arrayColors[30]}, this);
+        }else if(singleTimer.size()==32){
+            dataSet.setColors(new int[] {arrayColors[0],arrayColors[1],arrayColors[2],arrayColors[3],
+                    arrayColors[4],arrayColors[5],arrayColors[6],arrayColors[7],arrayColors[8],arrayColors[9]
+                    ,arrayColors[10],arrayColors[11],arrayColors[12],arrayColors[13],arrayColors[14],arrayColors[15]
+                    ,arrayColors[16],arrayColors[17],arrayColors[18],arrayColors[19],arrayColors[20]
+                    ,arrayColors[21],arrayColors[22],arrayColors[23],arrayColors[24],arrayColors[25]
+                    ,arrayColors[26],arrayColors[27],arrayColors[28],arrayColors[29],arrayColors[30],arrayColors[31]}, this);
         }
 
 //        dataSet.setColors(ColorTemplate.VORDIPLOM_COLORS);
@@ -965,6 +1183,21 @@ public class LoadRunPageActivity extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(), LoggedInDashboardFragment.class);
             }
         });
+
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        Toast.makeText(LoadRunPageActivity.this,"Multi-timer cancelled",Toast.LENGTH_LONG).show();
+
+        if(countDownTimer!=null){
+            countDownTimer.cancel();
+            timerRunning = false;
+        }
+
+        Intent intent = new Intent(getApplicationContext(), LoggedInTotalDashboardActivity.class);
+        startActivity(intent);
 
     }
 

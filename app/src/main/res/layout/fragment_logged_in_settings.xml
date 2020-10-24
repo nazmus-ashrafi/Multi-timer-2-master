@@ -68,7 +68,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="15"
-            app:srcCompat="@drawable/icon_envelope"
+            app:srcCompat="@drawable/bell_icon"
             tools:layout_editor_absoluteX="64dp"
             tools:layout_editor_absoluteY="246dp" />
 
@@ -129,13 +129,14 @@
 
     <LinearLayout
         android:id="@+id/passwordInput"
-        android:layout_width="350dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="150dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="38dp"
+        android:layout_marginEnd="30dp"
         android:background="@drawable/input_bg"
         android:orientation="horizontal"
         android:weightSum="100"
-        app:layout_constraintBottom_toTopOf="@+id/soundInput"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/emailInput">
@@ -183,7 +184,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="25"
-            app:srcCompat="@drawable/icon_key"
+            app:srcCompat="@drawable/person_icon"
             tools:ignore="DuplicateIds" />
 
         <EditText
