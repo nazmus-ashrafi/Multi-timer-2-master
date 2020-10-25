@@ -268,47 +268,60 @@ public class BuildScreenActivity extends AppCompatActivity {
     private void alertDialogForTitle() {
         //AlertDialog
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(BuildScreenActivity.this);
-        builder.setTitle("Set a title for your multi-timer");
+//        AlertDialog.Builder builder = new AlertDialog.Builder(BuildScreenActivity.this);
+//        builder.setTitle("Set a title for your multi-timer");
+//
+//
+//// Set up the input
+//        final EditText input = new EditText(BuildScreenActivity.this);
+//// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+//        input.setInputType(InputType.TYPE_CLASS_TEXT);
+//        builder.setView(input);
+//
+//// Set up the buttons
+//        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//
+//                //filling in the title of the multi-timer
+//                m_Text = input.getText().toString();
+//                multiTimer.setTitle(m_Text);
+//                reference.child(id).setValue(multiTimer);
+//                //----
+//
+//                Intent intent;
+//                intent = new Intent(BuildScreenActivity.this, RunPageActivity.class);
+//                System.out.println(id);
+//                intent.putExtra("id", id);
+////                            intent.putExtra("view",layoutManager)
+//                startActivity(intent);
+//
+//
+//
+//
+//            }
+//        });
+//        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                dialog.cancel();
+//            }
+//        });
+//
+//        builder.show();
 
 
-// Set up the input
-        final EditText input = new EditText(BuildScreenActivity.this);
-// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
-        builder.setView(input);
+        //------------------------------------------------------------------- ----   ----------------
 
-// Set up the buttons
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+        reference.child(id).setValue(multiTimer);
+        //----
 
-                //filling in the title of the multi-timer
-                m_Text = input.getText().toString();
-                multiTimer.setTitle(m_Text);
-                reference.child(id).setValue(multiTimer);
-                //----
-
-                Intent intent;
-                intent = new Intent(BuildScreenActivity.this, RunPageActivity.class);
-                System.out.println(id);
-                intent.putExtra("id", id);
+        Intent intent;
+        intent = new Intent(BuildScreenActivity.this, RunPageActivity.class);
+        System.out.println(id);
+        intent.putExtra("id", id);
 //                            intent.putExtra("view",layoutManager)
-                startActivity(intent);
-
-
-
-
-            }
-        });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-
-        builder.show();
+        startActivity(intent);
 
 
     }

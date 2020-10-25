@@ -67,6 +67,11 @@ public class LoadBuildScreenActivity extends AppCompatActivity {
     private FirebaseUser mUser;
     private String onlineUserID;
     //-----
+    int backPressCount =0;
+
+
+    DatabaseReference referenceMultitimerArraylistBackPress;
+    DatabaseReference referenceMultitimersBackPress;
 
     long totalTime;
     int stepNumber = 0;
@@ -74,12 +79,16 @@ public class LoadBuildScreenActivity extends AppCompatActivity {
     long displayTimeAtTop;
     int counter=0;
 
+    Integer one;
+    Integer two;
+
     ArrayList<SingleTimer> singleTimer = new ArrayList<>();
     ArrayList<MultiTimer> multiTimerArrayListToBeSaved = new ArrayList<>();
     Context context;
     String id;
     String index;
     String idGotten;
+    String indexGotten;
 
     long t2Hour,t2Minute;
 //    private TextView tvTimerView; //display
@@ -128,6 +137,7 @@ public class LoadBuildScreenActivity extends AppCompatActivity {
         index =getIntent().getStringExtra("MULTITIMER_INDEX");
 
         idGotten = id;
+        indexGotten = index;
 
         //-----
 
@@ -161,7 +171,34 @@ public class LoadBuildScreenActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 if(singleTimer.size()>1){
-                    alertDialogForTitle();
+
+//                    alertDialogForTitle();
+
+                    if(editCounter==0){
+                        Intent intent;
+                        intent = new Intent(LoadBuildScreenActivity.this, RunPageActivity.class);
+                        //Send to loadrunpageactivity with multitimertemporary as reference
+
+                        System.out.println(idGotten);
+                        intent.putExtra("id", idGotten);
+                        intent.putExtra("index", indexGotten);
+
+//                            intent.putExtra("view",layoutManager)
+                        startActivity(intent);
+                    }else{
+                        Intent intent;
+                        intent = new Intent(LoadBuildScreenActivity.this, LoadRunPageActivity.class);
+
+                        System.out.println(idGotten);
+                        intent.putExtra("id", idGotten);
+
+//                            intent.putExtra("view",layoutManager)
+                        startActivity(intent);
+                    }
+
+
+                    //if edited and started-create new id
+                    //if edited and save - save in this id
 
                 }else{
                     Toast.makeText(LoadBuildScreenActivity.this,"Must have at-least 2 timers",Toast.LENGTH_LONG).show();
@@ -320,6 +357,8 @@ public class LoadBuildScreenActivity extends AppCompatActivity {
                     Intent intent;
                     intent = new Intent(LoadBuildScreenActivity.this, RunPageActivity.class);
                     //Send to loadrunpageactivity with multitimertemporary as reference
+
+
 
                     System.out.println(id);
                     intent.putExtra("id", id);
@@ -756,20 +795,138 @@ public class LoadBuildScreenActivity extends AppCompatActivity {
 
     }
 
+
     @Override
     public void onBackPressed() {
         //on back button here and back button/on complete in run page -  delete multitimer temporary ***
 
+        if(backPressCount==0){
+
+            System.out.println("back is pressed");
+            finish();
+            DatabaseReference referenceBackPress = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID);
 
 
-        //deleting multitimer temporary
-        //REFERENCE---------
-        referenceTemporaryMultiTimer = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimers temporary");
-        referenceTemporaryMultiTimer.setValue(null);
+            referenceBackPress.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if(dataSnapshot.getValue()!=null){
 
-        //send to dashboard
-        Intent intent = new Intent(LoadBuildScreenActivity.this,LoggedInTotalDashboardActivity.class);
-        startActivity(intent);
+                        if(dataSnapshot.hasChild("multitimer arraylist")){
+
+                            if(indexGotten!=null){
+
+                                referenceMultitimerArraylistBackPress = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimer arraylist").child(indexGotten);
+                                referenceMultitimersBackPress = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimers").child(idGotten);
+
+
+                                referenceMultitimerArraylistBackPress.child("singleTimerArrayList").addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull final DataSnapshot dataSnapshot2) {
+                                        if(dataSnapshot2.getValue()!=null){
+
+                                            System.out.println("Size 1:   " + dataSnapshot2.getValue().toString().length());
+
+                                            one = dataSnapshot2.getValue().toString().length();
+
+
+                                            //
+
+
+                                            referenceMultitimersBackPress.child("singleTimerArrayList").addValueEventListener(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                    if(dataSnapshot.getValue()!=null){
+
+                                                        System.out.println("Size 2:   " + dataSnapshot.getValue().toString().length());
+
+                                                        two = dataSnapshot.getValue().toString().length();
+
+                                                        //
+
+                                                        if(one==two){
+                                                            System.out.println("keep entry in multitimers");
+                                                            System.out.println("EQUAL in LoadBuild ");
+
+
+
+                                                        }else{
+
+                                                            System.out.println("replace entry in multitimers with the one from multitimer arraylist");
+                                                            System.out.println("NOT EQUAL in LoadBuild ");
+
+
+                                                            if(backPressCount==0){
+                                                                referenceMultitimersBackPress.child("singleTimerArrayList").setValue(dataSnapshot2.getValue());
+                                                                backPressCount=1;
+
+                                                            }
+
+
+                                                            //maybe also delete multimers temporary
+
+
+                                                        }
+
+                                                    }
+
+                                                }
+
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                                }
+                                            });
+
+
+                                        }
+
+
+
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+
+                            }
+
+
+                        }else{
+                            two =0;
+                        }
+
+
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+            //-------------------
+
+
+            //deleting multitimer temporary
+            //REFERENCE---------
+            referenceTemporaryMultiTimer = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimers temporary");
+            referenceTemporaryMultiTimer.setValue(null);
+
+            //send to dashboard
+            Intent intent = new Intent(LoadBuildScreenActivity.this,LoggedInTotalDashboardActivity.class);
+            startActivity(intent);
+
+            //do the same as in runPageActivity
+
+        }
+
+
+
 
 
     }
@@ -1107,7 +1264,7 @@ public class LoadBuildScreenActivity extends AppCompatActivity {
                     //create multitimer
                     reference.child(id).setValue(multiTimer).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
-                        public void onComplete(@NonNull Task<Void> task) {
+                        public void onComplete(@NonNull Task<Void> task) {  //BUG - saves to multitimer 
                             if(task.isSuccessful()){
                                 Toast.makeText(LoadBuildScreenActivity.this,"Multi-timer updated",Toast.LENGTH_LONG).show();
 
@@ -1308,7 +1465,7 @@ public class LoadBuildScreenActivity extends AppCompatActivity {
         //
 
         stepNumber= singleTimer.size()+1;
-        step.setText("Step "+stepNumber);
+        step.setText("Step " + stepNumber);
 
 
         //cancel button
@@ -1597,6 +1754,7 @@ public class LoadBuildScreenActivity extends AppCompatActivity {
     }
 
 //
+
 
 
 }

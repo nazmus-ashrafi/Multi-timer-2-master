@@ -76,6 +76,8 @@ public class LoadRunPageActivity extends AppCompatActivity {
     private long timeLeft;
     private Dialog customDialog;
     private String currentSound;
+    private TextView swipeToShowCardText;
+
 
     private boolean timerStarted = false;
 
@@ -115,6 +117,8 @@ public class LoadRunPageActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        System.out.println("WE ARE IN LOADRUNPAGE ACTIVITY");
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_run_page);
 
@@ -136,7 +140,7 @@ public class LoadRunPageActivity extends AppCompatActivity {
         //get id from build page
         Bundle bundle = getIntent().getExtras();
         String id = bundle.getString("id");
-        System.out.println("Momo "+id);
+        System.out.println("Id at loadrunpage(momo2):  "+id);
         idUni = id;
 
         //initialize timer components
@@ -144,6 +148,7 @@ public class LoadRunPageActivity extends AppCompatActivity {
         countdownButton = findViewById(R.id.btnPlayTimer); //play/pause button
         timerProgress = findViewById(R.id.timerProgress);
         ringStepNumber = findViewById(R.id.countdown_steps);
+        swipeToShowCardText = findViewById(R.id.swipe_to_show_cards_text);
 
         skipButton = findViewById(R.id.btSkip);
         resetStepButton = findViewById(R.id.resetStepBtn);
@@ -574,9 +579,9 @@ public class LoadRunPageActivity extends AppCompatActivity {
 
         // SWIPE HERE TO SHOW CARDS
 
-//        if(singleTimer.isEmpty()){
-//            swipeToShowCardText.setVisibility(View.VISIBLE);
-//        }
+        if(singleTimer.isEmpty()){
+            swipeToShowCardText.setVisibility(View.VISIBLE);
+        }
 
 
 
@@ -1194,6 +1199,7 @@ public class LoadRunPageActivity extends AppCompatActivity {
         if(countDownTimer!=null){
             countDownTimer.cancel();
             timerRunning = false;
+            finish();
         }
 
         Intent intent = new Intent(getApplicationContext(), LoggedInTotalDashboardActivity.class);
