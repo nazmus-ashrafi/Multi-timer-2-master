@@ -197,6 +197,7 @@
             android:fontFamily="@font/montserrat"
             android:hint="Enter Name..."
             android:padding="16dp"
+            android:maxLength="26"
 
             />
 
