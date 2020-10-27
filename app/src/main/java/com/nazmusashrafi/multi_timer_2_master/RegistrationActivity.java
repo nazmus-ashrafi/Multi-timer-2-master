@@ -114,11 +114,12 @@ public class RegistrationActivity extends AppCompatActivity {
 
                                     if(task.isSuccessful()){
 
-
                                         Toast.makeText(RegistrationActivity.this,"You have been registered successfully",Toast.LENGTH_LONG).show();
                                         progressBar.setVisibility(View.GONE);
 
                                         //redirect to login layout
+                                        Intent intent = new Intent(RegistrationActivity.this,LoginActivity.class);
+                                        startActivity(intent);
 
                                     }else{
 
@@ -134,7 +135,8 @@ public class RegistrationActivity extends AppCompatActivity {
                             FirebaseDatabase.getInstance().getReference("Users")
                                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                     .child("sound")
-                                    .setValue("bell");
+                                    .setValue("Bell");
+
                         }else{
                             try {
                                 Toast.makeText(RegistrationActivity.this,"Failed to register, try again",Toast.LENGTH_LONG).show();
@@ -148,13 +150,8 @@ public class RegistrationActivity extends AppCompatActivity {
                         }
 
 
-
-
-
                     }
                 });
-
-
 
 
 

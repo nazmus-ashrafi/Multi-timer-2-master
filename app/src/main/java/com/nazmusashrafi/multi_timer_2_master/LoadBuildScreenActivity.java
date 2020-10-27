@@ -116,7 +116,7 @@ public class LoadBuildScreenActivity extends AppCompatActivity {
 
 
         //Buttons and text view declaration
-        Button addTimer = (Button) findViewById(R.id.btReset);
+        final Button addTimer = (Button) findViewById(R.id.btReset);
         Button startBtn = findViewById(R.id.btnstarttimer);
         TextView emptyView = (TextView) findViewById(R.id.empty_view);
         Button saveBtn = findViewById(R.id.btSave);
@@ -160,7 +160,28 @@ public class LoadBuildScreenActivity extends AppCompatActivity {
         addTimer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                //
                 addTask();
+
+                //
+
+                addTimer.setEnabled(false);
+
+
+                new Handler().postDelayed(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        // This method will be executed once the timer is over
+                        addTimer.setEnabled(true);
+
+
+                    }
+                },1000);// set time as per your requirement
+
+
+
             }
 
         });
@@ -191,6 +212,7 @@ public class LoadBuildScreenActivity extends AppCompatActivity {
 
                         System.out.println(idGotten);
                         intent.putExtra("id", idGotten);
+                        intent.putExtra("index", indexGotten);
 
 //                            intent.putExtra("view",layoutManager)
                         startActivity(intent);
@@ -212,6 +234,7 @@ public class LoadBuildScreenActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 System.out.println("Save timer, go to run page");
+
 
                 //REFERENCE---------
                 DatabaseReference referenceMultiTimerArraySave = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimer arraylist");
@@ -244,8 +267,9 @@ public class LoadBuildScreenActivity extends AppCompatActivity {
                     }
                 });
 //
-//
 //                //------
+
+
 
 
                 multiTimerArrayListToBeSaved.add(multiTimer);
@@ -267,6 +291,32 @@ public class LoadBuildScreenActivity extends AppCompatActivity {
                 input.setInputType(InputType.TYPE_CLASS_TEXT);
                 builder.setView(input);
 
+                //fill up save field with previous value
+
+                //REFERENCE---------
+                DatabaseReference referenceMultiTimerTitle = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimer arraylist").child(indexGotten).child("title");
+
+                referenceMultiTimerTitle.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+
+                            input.setText(dataSnapshot.getValue().toString());
+
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+
+                //----
+
+
+
 // Set up the buttons
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
@@ -277,6 +327,7 @@ public class LoadBuildScreenActivity extends AppCompatActivity {
                         //filling in the title of the multi-timer
                         m_Text = input.getText().toString();
                         multiTimer.setTitle(m_Text);
+
                         reference.child(idGotten).setValue(multiTimer);
                         //----
 
@@ -284,19 +335,44 @@ public class LoadBuildScreenActivity extends AppCompatActivity {
 
 
                         //update it and push back to db
-                        referenceMultiTimerArraySave.child("multitimer arraylist").child(index).child("singleTimerArrayList").setValue(multiTimerArrayListToBeSaved.get(0).getSingleTimerArrayList()).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful()){
-                                    Toast.makeText(LoadBuildScreenActivity.this,"Multi-timer saved in saved timers",Toast.LENGTH_LONG).show();
-                                    //notify change in parent recycler adapter
+                        if(multiTimerArrayListToBeSaved.get(0).getSingleTimerArrayList()!=null){
+                            referenceMultiTimerArraySave.child("multitimer arraylist").child(index).child("singleTimerArrayList").setValue(multiTimerArrayListToBeSaved.get(0).getSingleTimerArrayList()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if(task.isSuccessful()){
+                                        Toast.makeText(LoadBuildScreenActivity.this,"Multi-timer saved in saved timers",Toast.LENGTH_LONG).show();
+                                        //notify change in parent recycler adapter
+
+                                    }
 
                                 }
+                            });
 
-                            }
-                        });
+                        }
 
-                        //goto run page
+                        //
+
+                        System.out.println("Title for LoadBuildScreen at save is : " + multiTimer.getTitle() );
+                        System.out.println("Total time for LoadBuildScreen at save is : " + multiTimer.getTotalTime());
+
+                        referenceMultiTimerArraySave.child("multitimer arraylist").child(index).child("title").setValue(multiTimer.getTitle()); //title upload
+                        
+                        if(multiTimer.getTotalTime()!=0){
+                            referenceMultiTimerArraySave.child("multitimer arraylist").child(index).child("totalTime").setValue(multiTimer.getTotalTime()); //time upload
+
+                        }
+
+                        if(multiTimer.getTotalSteps()!=0){
+                            referenceMultiTimerArraySave.child("multitimer arraylist").child(index).child("totalSteps").setValue(multiTimer.getTotalSteps()); //steps upload
+
+                        }
+
+
+                        //------
+
+
+
+                        //goto total dashboard page
 
                         Intent intent;
                         intent = new Intent(LoadBuildScreenActivity.this, LoggedInTotalDashboardActivity.class);
@@ -540,6 +616,20 @@ public class LoadBuildScreenActivity extends AppCompatActivity {
 //                multiTimer.setId(id);
 //            }
 
+
+            //update multitimers
+
+            //REFERENCE---------
+            DatabaseReference referenceMultiTimerRemovemyltitimers = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimers").child(idGotten);
+
+
+            referenceMultiTimerRemovemyltitimers.setValue(multiTimer);
+
+            //-----------
+
+
+            //update multitimers temporary array
+
             //REFERENCE---------
             DatabaseReference referenceMultiTimerRemove = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimers temporary").child(idGotten);
 
@@ -555,6 +645,10 @@ public class LoadBuildScreenActivity extends AppCompatActivity {
 
                 }
             });
+
+            //-----------
+
+
             mAdapter.notifyDataSetChanged();
 
 
@@ -792,12 +886,12 @@ public class LoadBuildScreenActivity extends AppCompatActivity {
         }
 
 
-
     }
 
 
     @Override
     public void onBackPressed() {
+
         //on back button here and back button/on complete in run page -  delete multitimer temporary ***
 
         if(backPressCount==0){
@@ -924,8 +1018,6 @@ public class LoadBuildScreenActivity extends AppCompatActivity {
             //do the same as in runPageActivity
 
         }
-
-
 
 
 
@@ -1297,6 +1389,7 @@ public class LoadBuildScreenActivity extends AppCompatActivity {
 
                 }else{
 
+                    //update multitimers
                     //REFERENCE---------
                     referenceMultiTimer = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimers").child(idGotten);
 

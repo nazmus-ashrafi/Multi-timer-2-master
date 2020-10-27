@@ -36,6 +36,7 @@ import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -69,9 +70,11 @@ public class RunPageActivity extends AppCompatActivity {
     Integer one;
     Integer two;
 
+    Boolean frombuildscreenactivity;
 
 
     //timer universal vars
+    private Button stopButton;
     private TextView countdownText;
     private Button countdownButton;
     private Button resetMultiTimerButton;
@@ -101,6 +104,7 @@ public class RunPageActivity extends AppCompatActivity {
 
     DatabaseReference referenceMultitimerArraylistBackPress;
     DatabaseReference referenceMultitimersBackPress;
+    DatabaseReference referenceMultitimersTempBackPress;
 
 
     //variables & declarations
@@ -123,7 +127,6 @@ public class RunPageActivity extends AppCompatActivity {
     MediaPlayer softSound;
     MediaPlayer gearSound;
     MediaPlayer batmanSound;
-
 
 
 
@@ -154,8 +157,11 @@ public class RunPageActivity extends AppCompatActivity {
 
         //get id and index from build page
         Bundle bundle = getIntent().getExtras();
+
         String id = bundle.getString("id");
         String index = bundle.getString("index");
+        frombuildscreenactivity = bundle.getBoolean("frombuildscreenactivity"); //
+
         System.out.println("Id at runpage(momo):  "+id);
         idUni = id;
         indexUni = index;
@@ -168,6 +174,7 @@ public class RunPageActivity extends AppCompatActivity {
         swipeToShowCardText = findViewById(R.id.swipe_to_show_cards_text);
 
         skipButton = findViewById(R.id.btSkip);
+        stopButton = findViewById(R.id.btStop);
         resetStepButton = findViewById(R.id.resetStepBtn);
         resetMultiTimerButton = findViewById(R.id.btReset);
 
@@ -204,7 +211,7 @@ public class RunPageActivity extends AppCompatActivity {
         reference.addValueEventListener(new ValueEventListener() {   //TOTAL TIME BUG
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.getValue()!=null){
+                if(dataSnapshot.child("totalTime").getValue()!=null){
 
                     timeLeft = (long) dataSnapshot.child("totalTime").getValue();  //bug
                     //maybe send to save page after save , and not go to run - in loadbuildscreen and  buildscreen
@@ -401,6 +408,16 @@ public class RunPageActivity extends AppCompatActivity {
 
             }
         });
+
+
+        stopButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
+
+        //
 
 
 
@@ -916,8 +933,6 @@ public class RunPageActivity extends AppCompatActivity {
                 }
 
 
-
-
             }
 
 
@@ -977,8 +992,12 @@ public class RunPageActivity extends AppCompatActivity {
 
         pieChart = (PieChart) findViewById(R.id.pieChart);
 
-        pieChart.setUsePercentValues(true);
+
+        pieChart.setEntryLabelColor(Color.BLACK);
+        pieChart.getLegend().setEnabled(false);   // Hide the legend
+
         pieChart.getDescription().setEnabled(false);
+
         pieChart.setExtraOffsets(5,10,5,5);
 
         pieChart.setDragDecelerationFrictionCoef(0.95f);
@@ -994,7 +1013,7 @@ public class RunPageActivity extends AppCompatActivity {
             yValues.add(new PieEntry(retrivedTimes.get(i),retrivedTitles.get(i)));
         }
 
-        PieDataSet dataSet = new PieDataSet(yValues,"Timers");
+        PieDataSet dataSet = new PieDataSet(yValues,"");
         dataSet.setSliceSpace(3f);
         dataSet.setSelectionShift(5f);
 
@@ -1176,6 +1195,11 @@ public class RunPageActivity extends AppCompatActivity {
         data.setValueTextSize(10f);
         data.setValueTextColor(Color.BLACK);
 
+        //show percent sign
+        data.setValueFormatter(new PercentFormatter(pieChart));
+        pieChart.setUsePercentValues(true);
+        //----
+
         pieChart.setData(data);
         pieChart.setRotation(position);
         pieChart.setRotationX(10);
@@ -1215,13 +1239,22 @@ public class RunPageActivity extends AppCompatActivity {
                 startActivity(intent);
 
 
+                // ?
+                onBackPressed();
+
+
             }
         });
 
     }
 
+    //take care of back press on dashboard page ---
+
+
     @Override
     public void onBackPressed() {
+
+        System.out.println("runpageactivity bacpressed in runpageactivity");
 
 
             //destroy multitimer temporary on back button press
@@ -1243,6 +1276,7 @@ public class RunPageActivity extends AppCompatActivity {
 
                                 referenceMultitimerArraylistBackPress = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimer arraylist").child(indexUni);
                                 referenceMultitimersBackPress = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimers").child(idUni);
+                                 referenceMultitimersTempBackPress = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimers temporary").child(idUni);
 
 
                                 referenceMultitimerArraylistBackPress.child("singleTimerArrayList").addValueEventListener(new ValueEventListener() {
@@ -1280,10 +1314,15 @@ public class RunPageActivity extends AppCompatActivity {
                                                             System.out.println("replace entry in multitimers with the one from multitimer arraylist");
                                                             System.out.println("NOT EQUAL in RunPageActivity");
 
+                                                            //also delete multitimer temporary
+                                                            referenceMultitimersTempBackPress.setValue(null);
+
 
 
                                                             if(backPressCount==0){
                                                                 referenceMultitimersBackPress.child("singleTimerArrayList").setValue(dataSnapshot2.getValue());
+
+
                                                                 backPressCount=1;
 
                                                             }
@@ -1316,6 +1355,8 @@ public class RunPageActivity extends AppCompatActivity {
                                     }
                                 });
 
+
+
                             }
 
 
@@ -1338,6 +1379,48 @@ public class RunPageActivity extends AppCompatActivity {
 
             //-------------------
 
+            //when backpressed and timer not loaded by freshly made  -- BUGGY
+
+
+//            referenceMultitimersBackPress = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimers").child(idUni);
+//
+//
+//            if(referenceMultitimerArraylistBackPress!=null){
+//                referenceMultitimerArraylistBackPress.child("id").addValueEventListener(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                        if(!dataSnapshot.getValue().equals(idUni)){
+//                            System.out.println(idUni);
+//                            System.out.println(dataSnapshot.getValue());
+//                            System.out.println("hiiiiaty");
+//
+//
+//                            FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimers").child(idUni).setValue(null);
+//                        }
+//
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                    }
+//                });
+//
+//            }else{
+//                System.out.println("referenceMultitimerArraylistBackPress.child(id)==null");
+//
+//                System.out.println("no hiiiiaty");
+//                FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimers").child(idUni).setValue(null);
+//
+//            }
+
+            if(frombuildscreenactivity==true){
+                FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimers").child(idUni).setValue(null);
+
+            }
+
+
+            //-------
 
 
             Toast.makeText(RunPageActivity.this,"Multi-timer cancelled",Toast.LENGTH_LONG).show();
@@ -1359,7 +1442,6 @@ public class RunPageActivity extends AppCompatActivity {
             //
 
         }
-
 
 
 

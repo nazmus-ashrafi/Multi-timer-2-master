@@ -70,6 +70,7 @@ class ParentRecyclerAdapter extends RecyclerView.Adapter<ParentRecyclerAdapter.M
 
     int isLoaded =0;
     int count =0;
+    String id;
 
 
     private Context context;
@@ -161,6 +162,7 @@ class ParentRecyclerAdapter extends RecyclerView.Adapter<ParentRecyclerAdapter.M
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
+
                 //gets custom array list from db
                 GenericTypeIndicator<ArrayList<MultiTimer>> t = new GenericTypeIndicator<ArrayList<MultiTimer>>() {};
 
@@ -212,7 +214,6 @@ class ParentRecyclerAdapter extends RecyclerView.Adapter<ParentRecyclerAdapter.M
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-
 
 
         });
@@ -278,7 +279,6 @@ class ParentRecyclerAdapter extends RecyclerView.Adapter<ParentRecyclerAdapter.M
             }
 
 
-
         }
 
 
@@ -308,6 +308,8 @@ class ParentRecyclerAdapter extends RecyclerView.Adapter<ParentRecyclerAdapter.M
                         if (which==0){
                             System.out.println("Delete it");
 
+                            //update multitimer arraylist
+
                             //REFERENCE---------
                             reference = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimer arraylist");
 
@@ -317,8 +319,27 @@ class ParentRecyclerAdapter extends RecyclerView.Adapter<ParentRecyclerAdapter.M
 
                             notifyItemRemoved(position);
 
+                            //---
+
+                            //delete from multitimers and multitimerstemporary by id
+
+                            System.out.println(multiTimerArrayList.get(position).getId());
+
+                            DatabaseReference referenceMul = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimers").child(multiTimerArrayList.get(position).getId());
+                            DatabaseReference referenceMulTemp = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimers temporary").child(multiTimerArrayList.get(position).getId());
+
+                            if(referenceMul!=null){
+                                referenceMul.setValue(null);
+                            }
+
+                            if(referenceMulTemp!=null){
+                                referenceMulTemp.setValue(null);
+                            }
+
+                            //-------
 
 
+                            //
                             Intent intent;
                             intent = new Intent(holder.itemView.getContext(), LoggedInTotalDashboardActivity.class);
 
@@ -393,8 +414,6 @@ class ParentRecyclerAdapter extends RecyclerView.Adapter<ParentRecyclerAdapter.M
 //                context.startActivity(intent);
 
 
-
-
             }
 
 
@@ -430,7 +449,6 @@ class ParentRecyclerAdapter extends RecyclerView.Adapter<ParentRecyclerAdapter.M
             multitimerCard = itemView.findViewById(R.id.multitimercard);
 
             ChildRV = itemView.findViewById(R.id.ChildRV);
-
 
 
         }

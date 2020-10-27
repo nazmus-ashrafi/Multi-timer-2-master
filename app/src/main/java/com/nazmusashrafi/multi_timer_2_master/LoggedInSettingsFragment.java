@@ -101,7 +101,6 @@ public class LoggedInSettingsFragment extends Fragment implements AdapterView.On
         //------
 
 
-
         //
 
         reference.child(onlineUserID).child("sound").addListenerForSingleValueEvent(new ValueEventListener() {
@@ -117,6 +116,8 @@ public class LoggedInSettingsFragment extends Fragment implements AdapterView.On
                     spinnerSoundSelector.setVisibility(View.VISIBLE);
 
                     if(dataSnapshot.getValue().equals("Bell")){
+                        spinnerSoundSelector.setSelection(0);
+                    }else if(dataSnapshot.getValue().equals("bell")){
                         spinnerSoundSelector.setSelection(0);
                     }else if(dataSnapshot.getValue().equals("Gear")){
                         spinnerSoundSelector.setSelection(1);

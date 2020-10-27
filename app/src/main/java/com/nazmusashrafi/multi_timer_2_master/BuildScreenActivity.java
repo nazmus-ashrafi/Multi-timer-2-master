@@ -101,7 +101,7 @@ public class BuildScreenActivity extends AppCompatActivity {
 
 
         //Buttons and text view declaration
-        Button addTimer = (Button) findViewById(R.id.btReset);
+        final Button addTimer = (Button) findViewById(R.id.btReset);
         Button startBtn = findViewById(R.id.btnstarttimer);
         TextView emptyView = (TextView) findViewById(R.id.empty_view);
         Button saveBtn = findViewById(R.id.btSave);
@@ -123,11 +123,33 @@ public class BuildScreenActivity extends AppCompatActivity {
         //recycler view animation
         recyclerViewAnimation();
 
+
         //Add timer button response
         addTimer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                //
                 addTask();
+
+                //
+
+                addTimer.setEnabled(false);
+
+
+                new Handler().postDelayed(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        // This method will be executed once the timer is over
+                        addTimer.setEnabled(true);
+
+
+                    }
+                },1000);// set time as per your requirement
+
+
+
             }
 
         });
@@ -320,6 +342,8 @@ public class BuildScreenActivity extends AppCompatActivity {
         intent = new Intent(BuildScreenActivity.this, RunPageActivity.class);
         System.out.println(id);
         intent.putExtra("id", id);
+        intent.putExtra("frombuildscreenactivity", true); //
+
 //                            intent.putExtra("view",layoutManager)
         startActivity(intent);
 
@@ -1393,6 +1417,22 @@ public class BuildScreenActivity extends AppCompatActivity {
         timePickerDialog.updateTime(0,0);
 
         timePickerDialog.show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        System.out.println("the frekin id is "+ id);
+
+        DatabaseReference referenceMultitimersBackPressed = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimers").child(id);
+
+        referenceMultitimersBackPressed.setValue(null);
+
+        //send to dashboard
+        Intent intent = new Intent(BuildScreenActivity.this,LoggedInTotalDashboardActivity.class);
+        startActivity(intent);
+
+
+        Toast.makeText(BuildScreenActivity.this,"Multi-timer builder cancelled",Toast.LENGTH_LONG).show();
     }
 
 //

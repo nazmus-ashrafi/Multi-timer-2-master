@@ -53,6 +53,8 @@ public class LoggedInSavedTimersFragment extends Fragment {
     ArrayList<Long> multiTimerColorArrayList = new ArrayList<>();
 
 
+    boolean noInfo = true;
+
 
 
     @Override
@@ -87,10 +89,13 @@ public class LoggedInSavedTimersFragment extends Fragment {
         final ProgressBar loading = view.findViewById(R.id.progressBar);
 
         recyclerView.setAdapter(adapter);
-        if(adapter==null){
+
+        if(adapter==null ){
             System.out.println("loading...");
 
             loading.setVisibility(View.VISIBLE);
+
+
         }
 
 
@@ -103,6 +108,17 @@ public class LoggedInSavedTimersFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
+                //make loader invisible if noInfo
+
+                if(dataSnapshot.hasChildren()){
+                    noInfo = false;
+                }
+
+                if(noInfo){
+                    loading.setVisibility(View.INVISIBLE);
+                }
+
+                //------
 
                 //gets custom array list from db
                 GenericTypeIndicator<ArrayList<MultiTimer>> t = new GenericTypeIndicator<ArrayList<MultiTimer>>() {};
