@@ -11,15 +11,24 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ForgotPasswordActivity"></activity>
-        <activity android:name=".RunPageActivity" />
-        <activity android:name=".BuildScreenActivity" />
-        <activity android:name=".LoadBuildScreenActivity" />
-        <activity android:name=".LoadRunPageActivity" />
-        <activity android:name=".LoggedInTotalDashboardActivity" />
-        <activity android:name=".RegistrationActivity" />
-        <activity android:name=".LoginActivity" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".ForgotPasswordActivity"
+            android:screenOrientation="portrait" ></activity>
+        <activity android:name=".RunPageActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".BuildScreenActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".LoadBuildScreenActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".LoadRunPageActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".LoggedInTotalDashboardActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".RegistrationActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".LoginActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".MainActivity"
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -22,6 +22,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
@@ -148,9 +149,27 @@ class ParentRecyclerAdapter extends RecyclerView.Adapter<ParentRecyclerAdapter.M
 
         //-------------------
 
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false);
-        holder.ChildRV.setLayoutManager(layoutManager);
-        holder.ChildRV.setHasFixedSize(true);
+
+        //n                               HERE ----------------------- layoutmanager
+        ////customLinearlayoutManager
+
+
+        GridLayoutManager mGridLayoutManager;
+        mGridLayoutManager = new GridLayoutManager(context, 2);
+
+
+
+//            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(context,LinearLayoutManager.VERTICAL,false);
+
+        RecyclerView.LayoutManager layoutManager = mGridLayoutManager;
+
+
+
+            holder.ChildRV.setLayoutManager(layoutManager);
+            holder.ChildRV.setHasFixedSize(true);
+
+
+
 
 
         //REFERENCE---------
@@ -196,6 +215,7 @@ class ParentRecyclerAdapter extends RecyclerView.Adapter<ParentRecyclerAdapter.M
 
 
                     if(isLoaded==0){
+
                         notifyDataSetChanged(); //bug fix for horizontal RV not showing up in vertical RV
                         isLoaded=1;
                     }
@@ -206,7 +226,6 @@ class ParentRecyclerAdapter extends RecyclerView.Adapter<ParentRecyclerAdapter.M
 
 
             }
-
 
 
 
@@ -250,6 +269,7 @@ class ParentRecyclerAdapter extends RecyclerView.Adapter<ParentRecyclerAdapter.M
 
         //--------------
 
+
         daysArrayList.clear(); //step title arraylist
         stepNoArrayList.clear(); //step number arraylist
         stepTimeArrayList.clear(); //step time arraylist
@@ -263,9 +283,12 @@ class ParentRecyclerAdapter extends RecyclerView.Adapter<ParentRecyclerAdapter.M
 
                 if(multiTimerArrayList.get(position).equals(multiTimerArrayList.get(i))){
 
+
                     singleTimerArrayList.add(multiTimerArrayList.get(i).getSingleTimerArrayList());
 
                     for(int j=0;j<singleTimerArrayList.get(i).size();j++){
+
+
                         daysArrayList.add(singleTimerArrayList.get(i).get(j).getTitle()); //step title
                         stepNoArrayList.add(singleTimerArrayList.get(i).get(j).getStepNumber()); //step number
                         stepTimeArrayList.add(singleTimerArrayList.get(i).get(j).getTime()); //step time
@@ -281,11 +304,19 @@ class ParentRecyclerAdapter extends RecyclerView.Adapter<ParentRecyclerAdapter.M
 
         }
 
+        //                  HERE------------------- adapter
 
-        ChildRecyclerAdapter childRecyclerAdapter = new ChildRecyclerAdapter(daysArrayList,stepNoArrayList,stepTimeArrayList);
-        holder.ChildRV.setAdapter(childRecyclerAdapter);
 
-        childRecyclerAdapter.notifyDataSetChanged();
+                final ChildRecyclerAdapter childRecyclerAdapter = new ChildRecyclerAdapter(daysArrayList,stepNoArrayList,stepTimeArrayList);
+
+
+                holder.ChildRV.setAdapter(childRecyclerAdapter);
+
+
+                childRecyclerAdapter.notifyDataSetChanged();
+
+
+
 
 
         //delete button

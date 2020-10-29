@@ -187,6 +187,9 @@
             app:srcCompat="@drawable/person_icon"
             tools:ignore="DuplicateIds" />
 
+
+
+
         <EditText
             android:id="@+id/editTextTextName"
             android:layout_width="wrap_content"
@@ -197,9 +200,19 @@
             android:fontFamily="@font/montserrat"
             android:hint="Enter Name..."
             android:padding="16dp"
-            android:maxLength="26"
+            android:maxLength="25"
+
 
             />
+
+        <TextView
+            android:id="@+id/tvCounter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="25"
+            android:text="0/0"
+            android:layout_marginRight="10dp"/>
+
 
     </LinearLayout>
 

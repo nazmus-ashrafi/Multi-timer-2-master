@@ -78,11 +78,13 @@
 
                 <TextView
                     android:id="@+id/tvDesc"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_marginTop="20dp"
                     android:paddingLeft="30dp"
                     android:paddingRight="30dp"
+                    android:gravity="top|center_horizontal"
+
                     android:text="Lorem Ipsum is simply dummy text of
 the printing and typesetting industry.
 Lorem Ipsum has been. typesetting industry.
@@ -178,9 +180,6 @@ Lorem Ipsum.Lorem Ipsum is simply dummy."
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
 
 
 

@@ -200,6 +200,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 }else{
                     Toast.makeText(LoginActivity.this,"Failed to login! Please check your credentials",Toast.LENGTH_LONG).show();
+                    progressBar.setVisibility(View.INVISIBLE);
                 }
             }
         });

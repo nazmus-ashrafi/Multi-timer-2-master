@@ -18,8 +18,12 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
+import android.text.Editable;
+import android.text.Html;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
@@ -217,7 +221,9 @@ public class BuildScreenActivity extends AppCompatActivity {
                 //AlertDialog
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(BuildScreenActivity.this);
-                builder.setTitle("Set a title for your multi-timer");
+//                builder.setTitle("Set a title for your multi-timer");
+
+                builder.setTitle( Html.fromHtml("<font color='#63c1e8'>Set a title for your multi-timer</font>"));
 
 
 // Set up the input
@@ -601,7 +607,14 @@ public class BuildScreenActivity extends AppCompatActivity {
             Button duration = myView.findViewById(R.id.btDuration);
             final TextView tvTimerView = myView.findViewById(R.id.tvTimerView);
             final ImageView inputViewColor = myView.findViewById(R.id.imgArticle);
+
+            final TextView titleWordCount = myView.findViewById(R.id.titleWordCount);
+            final TextView descWordCount = myView.findViewById(R.id.titleDescCount);
             //----
+
+            //word counter
+            wordCounter(title, desc, titleWordCount, descWordCount);
+            //
 
             String retrivedTitle;
             final String retrivedId;
@@ -753,7 +766,13 @@ public class BuildScreenActivity extends AppCompatActivity {
 
                 String[] colors = {"Add at the end", "Add after step "+ (position+1)};
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+                //
+
+
+                //
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AlertDialogCustom));
                 builder.setTitle("Add timer");
                 builder.setItems(colors, new DialogInterface.OnClickListener() {
                     @Override
@@ -770,6 +789,10 @@ public class BuildScreenActivity extends AppCompatActivity {
                     }
                 });
                 builder.show();
+
+                //
+
+
 
             }
 
@@ -801,7 +824,13 @@ public class BuildScreenActivity extends AppCompatActivity {
         Button duration = myView.findViewById(R.id.btDuration);
         final TextView tvTimerView = myView.findViewById(R.id.tvTimerView);
         final ImageView inputViewColor = myView.findViewById(R.id.imgArticle);
+
+        final TextView titleWordCount = myView.findViewById(R.id.titleWordCount);
+        final TextView descWordCount = myView.findViewById(R.id.titleDescCount);
         //----
+
+        //word counter
+        wordCounter(title, desc, titleWordCount, descWordCount);
 
         //give a random color to the card
         Random rand = new Random();
@@ -1131,6 +1160,17 @@ public class BuildScreenActivity extends AppCompatActivity {
         Button duration = myView.findViewById(R.id.btDuration);
         final TextView tvTimerView = myView.findViewById(R.id.tvTimerView);
         final ImageView inputViewColor = myView.findViewById(R.id.imgArticle);
+
+        final TextView titleWordCount = myView.findViewById(R.id.titleWordCount);
+        final TextView descWordCount = myView.findViewById(R.id.titleDescCount);
+        //----
+
+        //word counter
+        wordCounter(title, desc, titleWordCount, descWordCount);
+
+
+        //do same for LoadBuildScreenActivity
+
         //----
 
         //give a random color to the card
@@ -1367,6 +1407,47 @@ public class BuildScreenActivity extends AppCompatActivity {
 
             }
 
+        });
+    }
+
+    private void wordCounter(EditText title, EditText desc, final TextView titleWordCount, final TextView descWordCount) {
+        //word counter viewer title
+        title.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                titleWordCount.setText(30 - s.toString().length() + "/30");
+
+            }
+        });
+
+
+        //word counter viewer desc
+        desc.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                descWordCount.setText(110 - s.toString().length() + "/110");
+
+            }
         });
     }
 

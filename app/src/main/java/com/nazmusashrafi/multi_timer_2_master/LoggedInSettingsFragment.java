@@ -2,13 +2,17 @@ package com.nazmusashrafi.multi_timer_2_master;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
+import android.text.Editable;
+import android.text.Html;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,12 +55,21 @@ public class LoggedInSettingsFragment extends Fragment implements AdapterView.On
 
     String valueFromSpinner;
 
+    //sounds
+    MediaPlayer bellSound;
+    MediaPlayer chilledSound;
+    MediaPlayer softSound;
+    MediaPlayer gearSound;
+    MediaPlayer batmanSound;
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_logged_in_settings, container, false);
+
     }
 
 
@@ -65,6 +78,7 @@ public class LoggedInSettingsFragment extends Fragment implements AdapterView.On
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+
         mUser = FirebaseAuth.getInstance().getCurrentUser();
         reference = FirebaseDatabase.getInstance().getReference().child("Users");
         onlineUserID = mUser.getUid();
@@ -72,6 +86,7 @@ public class LoggedInSettingsFragment extends Fragment implements AdapterView.On
         Button logoutButton = (Button) view.findViewById(R.id.logOutButton);
         Button saveButton = (Button) view.findViewById(R.id.saveButton);
         Button deleteAccountButton = (Button) view.findViewById(R.id.deleteAccountButton);
+        final TextView wordCounter = view.findViewById(R.id.tvCounter);
 
         final LinearLayout emailTextView = view.findViewById(R.id.emailInput);
         final LinearLayout passwordTextView = view.findViewById(R.id.passwordInput);
@@ -82,6 +97,28 @@ public class LoggedInSettingsFragment extends Fragment implements AdapterView.On
         final EditText mPasswordText = view.findViewById(R.id.editTextTextPassword);
         final EditText mNameText = view.findViewById(R.id.editTextTextName);
         final ProgressBar progressBar = view.findViewById(R.id.progressBarSettingsPage);
+
+        //word counter viewer
+        mNameText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                wordCounter.setText(25 - s.toString().length() + "/25");
+
+            }
+        });
+
+        //----
+
 
         //sound-----
         spinnerSoundSelector = view.findViewById(R.id.spinnerSoundSelector); //spinnerTextSize
@@ -98,10 +135,19 @@ public class LoggedInSettingsFragment extends Fragment implements AdapterView.On
         spinnerSoundSelector.setVisibility(View.INVISIBLE);
 
 
+        //
+
+        //sounds
+        bellSound = MediaPlayer.create(getActivity(), R.raw.bell);
+        chilledSound = MediaPlayer.create(getActivity(), R.raw.chilled);
+        softSound = MediaPlayer.create(getActivity(), R.raw.soft);
+        gearSound = MediaPlayer.create(getActivity(), R.raw.gear);
+        batmanSound = MediaPlayer.create(getActivity(), R.raw.batman);
+
+
         //------
 
 
-        //
 
         reference.child(onlineUserID).child("sound").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -130,6 +176,10 @@ public class LoggedInSettingsFragment extends Fragment implements AdapterView.On
                     }
                 }
 
+                //
+
+
+
 
             }
 
@@ -138,6 +188,8 @@ public class LoggedInSettingsFragment extends Fragment implements AdapterView.On
 
             }
         });
+
+
 
 
         //----------------
@@ -462,14 +514,18 @@ public class LoggedInSettingsFragment extends Fragment implements AdapterView.On
 
                 }
             });
+                builder.setTitle( Html.fromHtml("<font color='#63c1e8'>Are you sure?</font>"));
+
                 builder.show();
 
             }
         });
 
 
-
     }
+
+
+    int counterSound = 0;
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
@@ -477,7 +533,34 @@ public class LoggedInSettingsFragment extends Fragment implements AdapterView.On
 
             valueFromSpinner = adapterView.getItemAtPosition(position).toString();
 
+
+            //play sound on selected
+            if(counterSound>=2){
+
+                if(position==2){
+                    batmanSound.start();
+                }else if(position==3){
+                    chilledSound.start();
+                }else if(position==4){
+                    softSound.start();
+                }else if(position==1){
+                    gearSound.start();
+                }else if(position==0){
+                    bellSound.start();
+                }
+
+
+            }
+
+            counterSound++;
+
+
+
+
         }
+
+
+
 
     }
 

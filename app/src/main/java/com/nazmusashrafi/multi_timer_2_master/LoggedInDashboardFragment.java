@@ -38,8 +38,6 @@ public class LoggedInDashboardFragment extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_logged_in_dashboard, container, false);
 
-
-
     }
 
     @Override

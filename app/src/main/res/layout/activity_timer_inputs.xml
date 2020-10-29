@@ -86,7 +86,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="240dp"
                     android:layout_marginTop="20dp"
-                    android:gravity="top|left"
+                    android:gravity="top|start"
                     android:hint="Description"
                     android:inputType="textMultiLine"
                     android:maxLength="110"
@@ -124,7 +124,7 @@
                     android:id="@+id/btDuration"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="32dp"
+                    android:layout_marginEnd="42dp"
                     android:background="@drawable/bt_ui_readmore"
                     android:paddingLeft="30dp"
                     android:paddingRight="30dp"
@@ -141,6 +141,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
 
+                    android:layout_marginStart="32dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="8dp"
                     android:background="@drawable/bt_ui_readmore"
                     android:paddingLeft="20dp"
                     android:paddingRight="20dp"
@@ -149,11 +152,8 @@
                     android:textColor="@color/colorWhite"
                     android:textSize="22sp"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/btConfirm"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tvTimerView"
-                    app:layout_constraintVertical_bias="0.043" />
-
+                    app:layout_constraintTop_toBottomOf="@+id/tvTimerView" />
 
 
                 <Button
@@ -161,7 +161,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
 
-                    android:layout_marginStart="9dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="8dp"
                     android:background="@drawable/bt_ui_readmore"
                     android:paddingLeft="30dp"
                     android:paddingRight="30dp"
@@ -171,10 +172,8 @@
                     android:textSize="22sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.142"
-                    app:layout_constraintStart_toEndOf="@+id/tvTimerView"
-                    app:layout_constraintTop_toBottomOf="@+id/btDuration"
-                    app:layout_constraintVertical_bias="0.053" />
+                    app:layout_constraintStart_toEndOf="@+id/btCancel"
+                    app:layout_constraintTop_toBottomOf="@+id/btDuration" />
 
                 <View
 
@@ -183,9 +182,33 @@
                     android:layout_height="581dp"
                     android:background="@drawable/bg_shadow"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintHorizontal_bias="1.0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/tvMainTitle" />
+
+                <TextView
+                    android:id="@+id/titleWordCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="240dp"
+                    android:layout_marginTop="55dp"
+                    android:text="30/30"
+                    app:layout_constraintBottom_toBottomOf="@+id/tvMainTitle"
+                    app:layout_constraintEnd_toEndOf="@+id/tvMainTitle"
+                    app:layout_constraintStart_toStartOf="@+id/tvMainTitle"
+                    app:layout_constraintTop_toBottomOf="@+id/tvMainTitleStep" />
+
+                <TextView
+                    android:id="@+id/titleDescCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="340dp"
+                    android:layout_marginTop="190dp"
+                    android:text="110/110"
+                    app:layout_constraintBottom_toBottomOf="@+id/tvDesc"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/imgArticle"
+                    app:layout_constraintTop_toTopOf="@+id/tvDesc" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>

@@ -104,6 +104,8 @@ public class LoggedInSavedTimersFragment extends Fragment {
         //REFERENCE---------
         reference = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimer arraylist");
 
+
+
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -117,6 +119,7 @@ public class LoggedInSavedTimersFragment extends Fragment {
                 if(noInfo){
                     loading.setVisibility(View.INVISIBLE);
                 }
+
 
                 //------
 

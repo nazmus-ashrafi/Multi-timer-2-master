@@ -59,6 +59,8 @@
 
 
             <androidx.recyclerview.widget.RecyclerView
+                android:paddingLeft="25dp"
+
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/ChildRV"
@@ -91,11 +93,12 @@
                     android:id="@+id/loadBtn"
                     android:layout_width="130dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="7dp"
+
                     android:layout_marginTop="10dp"
                     android:background="@drawable/bt_ui_readmore"
                     android:paddingLeft="30dp"
                     android:paddingRight="30dp"
-                    android:layout_marginLeft="35dp"
 
                     android:text="Load"
                     android:textAllCaps="false"
