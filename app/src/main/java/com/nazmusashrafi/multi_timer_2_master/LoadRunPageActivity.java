@@ -511,8 +511,6 @@ public class LoadRunPageActivity extends AppCompatActivity {
 
 
 
-
-
     }
 
 

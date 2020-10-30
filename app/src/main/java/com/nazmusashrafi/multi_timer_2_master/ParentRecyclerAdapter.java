@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Parcelable;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -329,7 +330,7 @@ class ParentRecyclerAdapter extends RecyclerView.Adapter<ParentRecyclerAdapter.M
                 final String[] colors = {"Yes", "No"};
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setTitle("Are you sure you want to delete this Multitimer?");
+//                builder.setTitle("Are you sure you want to delete this Multitimer?");
 
                 builder.setItems(colors, new DialogInterface.OnClickListener() {
                     @Override
@@ -431,6 +432,8 @@ class ParentRecyclerAdapter extends RecyclerView.Adapter<ParentRecyclerAdapter.M
 
                     }
                 });
+
+                builder.setTitle( Html.fromHtml("<font color='#63c1e8'>Are you sure you want to delete this Multitimer?</font>"));
                 builder.show();
 
 

@@ -273,8 +273,11 @@ public class LoadBuildScreenActivity extends AppCompatActivity {
                 System.out.println("Save timer, go to run page");
 
 
+
+
                 //REFERENCE---------
-                DatabaseReference referenceMultiTimerArraySave = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimer arraylist");
+                final DatabaseReference referenceMultiTimerArraySave = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimer arraylist");
+                final DatabaseReference referenceMultiTimerSave = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimers");
 
                 referenceMultiTimerArraySave.addValueEventListener(new ValueEventListener() {
                     @Override
@@ -293,6 +296,7 @@ public class LoadBuildScreenActivity extends AppCompatActivity {
 
                             multiTimerArrayListToBeSaved.addAll(yourMultitimerArray);
 
+
                         }
 
 
@@ -305,6 +309,8 @@ public class LoadBuildScreenActivity extends AppCompatActivity {
                 });
 //
 //                //------
+
+
 
 
                 multiTimerArrayListToBeSaved.add(multiTimer);
@@ -359,10 +365,13 @@ public class LoadBuildScreenActivity extends AppCompatActivity {
 
 
 
+
 // Set up the buttons
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+
+
                         //REFERENCE---------
                         DatabaseReference referenceMultiTimerArraySave = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID);
 
@@ -392,6 +401,7 @@ public class LoadBuildScreenActivity extends AppCompatActivity {
 
                         }
 
+
                         //
 
                         System.out.println("Title for LoadBuildScreen at save is : " + multiTimer.getTitle() );
@@ -407,10 +417,35 @@ public class LoadBuildScreenActivity extends AppCompatActivity {
                         if(multiTimer.getTotalSteps()!=0){
                             referenceMultiTimerArraySave.child("multitimer arraylist").child(index).child("totalSteps").setValue(multiTimer.getTotalSteps()); //steps upload
 
+
                         }
 
 
-                        //------
+
+                        //update multitimer fix for not changing by saving
+
+                        //REFERENCE---------
+                        DatabaseReference referenceMultiTimerAr = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimer arraylist").child(indexGotten).child("singleTimerArrayList");
+
+                        referenceMultiTimerAr.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+
+                                referenceMultiTimerSave.child(idGotten).child("singleTimerArrayList").setValue(dataSnapshot.getValue());
+
+
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+
+
+                        //----
+
 
 
 
@@ -807,6 +842,9 @@ public class LoadBuildScreenActivity extends AppCompatActivity {
 
             if(editCounter==0 && !multitimersTemporaryPresent){
 
+                System.out.println("HITO");
+                System.out.println("hito  " + idGotten);
+
 
                 //REFERENCE---------
                 referenceMultiTimer = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimers").child(idGotten);
@@ -854,7 +892,7 @@ public class LoadBuildScreenActivity extends AppCompatActivity {
 
             }else{
 
-                System.out.println("HITO");
+
 
 
                 //REFERENCE---------

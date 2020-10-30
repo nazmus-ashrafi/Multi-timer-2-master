@@ -46,6 +46,7 @@ import com.google.firebase.database.ValueEventListener;
 public class LoggedInSettingsFragment extends Fragment implements AdapterView.OnItemSelectedListener {
 
     private DatabaseReference reference;
+    private DatabaseReference referencedel;
     private FirebaseAuth mAuth;
     private FirebaseUser mUser;
     private String onlineUserID;
@@ -466,6 +467,16 @@ public class LoggedInSettingsFragment extends Fragment implements AdapterView.On
 
                             System.out.println("Delete account");
 
+                        //delete info from firebase
+                        //REFERENCE---------
+
+                        referencedel = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID);
+
+                        referencedel.removeValue();
+                        referencedel.setValue(null);
+
+                        //-----
+
 
                             //delete from authentication
                             mUser.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -476,13 +487,6 @@ public class LoggedInSettingsFragment extends Fragment implements AdapterView.On
 
                                     if(task.isSuccessful()){
 
-                                        //delete info from firebase
-                                        //REFERENCE---------
-                                        reference = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID);
-
-                                        reference.removeValue();
-
-                                        //-----
 
                                         Intent intent;
                                         intent = new Intent(getActivity(), LoginActivity.class);
