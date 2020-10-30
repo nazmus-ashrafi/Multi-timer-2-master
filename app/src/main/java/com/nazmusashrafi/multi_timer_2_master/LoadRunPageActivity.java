@@ -1443,6 +1443,8 @@ public class LoadRunPageActivity extends AppCompatActivity {
         Intent intent = new Intent(getApplicationContext(), LoggedInTotalDashboardActivity.class);
         startActivity(intent);
 
+        finish();
+
     }
 
 }

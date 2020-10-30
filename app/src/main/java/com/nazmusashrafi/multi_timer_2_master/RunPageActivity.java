@@ -1434,6 +1434,8 @@ public class RunPageActivity extends AppCompatActivity {
                 countDownTimer.cancel();
                 timerRunning = false;
 
+                finish();
+
             }
 
 
@@ -1448,8 +1450,6 @@ public class RunPageActivity extends AppCompatActivity {
             //
 
         }
-
-
 
 
 

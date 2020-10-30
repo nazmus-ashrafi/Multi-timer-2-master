@@ -31,7 +31,7 @@
 
                 <ImageView
                     android:id="@+id/imgArticle"
-                    android:layout_width="1415dp"
+                    android:layout_width="415dp"
                     android:layout_height="599dp"
                     android:background="@color/cardColorCreamH"
                     android:scaleType="centerCrop"
@@ -55,7 +55,7 @@
                     android:textAlignment="center"
                     android:textColor="@color/colorTextBlack"
                     android:textSize="40sp"
-
+                    android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -78,13 +78,11 @@
 
                 <TextView
                     android:id="@+id/tvDesc"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="0dp"
                     android:layout_marginTop="20dp"
-                    android:gravity="top|center_horizontal"
                     android:paddingLeft="30dp"
                     android:paddingRight="30dp"
-
                     android:text="Lorem Ipsum is simply dummy text of
 the printing and typesetting industry.
 Lorem Ipsum has been. typesetting industry.
@@ -97,6 +95,23 @@ Lorem Ipsum.Lorem Ipsum is simply dummy."
                     app:layout_constraintStart_toStartOf="@+id/imgArticle"
                     app:layout_constraintTop_toBottomOf="@+id/tvMainTitle" />
 
+
+                <TextView
+                    android:id="@+id/tvTimerView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:paddingLeft="30dp"
+                    android:paddingRight="30dp"
+                    android:text="00:00"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorTextBlack"
+                    android:textSize="30sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/imgArticle"
+                    app:layout_constraintTop_toBottomOf="@+id/tvDesc"
+                    android:paddingBottom="30dp"
+                    />
 
                 <!--                <Button-->
                 <!--                    android:id="@+id/btRemove"-->
@@ -142,23 +157,6 @@ Lorem Ipsum.Lorem Ipsum is simply dummy."
                 <!--                    app:layout_constraintStart_toStartOf="parent"-->
                 <!--                    app:layout_constraintTop_toBottomOf="@+id/tvTimerView" />-->
 
-                <TextView
-                    android:id="@+id/tvTimerView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="24dp"
-                    android:paddingLeft="30dp"
-                    android:paddingRight="30dp"
-                    android:paddingBottom="30dp"
-                    android:text="00:00"
-                    android:textAlignment="center"
-                    android:textColor="@color/colorTextBlack"
-                    android:textSize="30sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tvDesc" />
-
                 <View
 
                     android:id="@+id/view"
@@ -166,7 +164,7 @@ Lorem Ipsum.Lorem Ipsum is simply dummy."
                     android:layout_height="440dp"
                     android:background="@drawable/bg_shadow"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintHorizontal_bias="1.0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/tvMainTitle" />
 
@@ -180,6 +178,9 @@ Lorem Ipsum.Lorem Ipsum is simply dummy."
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
 
 
 
