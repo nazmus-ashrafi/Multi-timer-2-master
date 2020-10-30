@@ -41,4 +41,11 @@
             android:resource="@array/preloaded_fonts" />
     </application>
 
+
+
+
+<!--    <supports-screens-->
+<!--        android:xlargeScreens="false"-->
+<!--        />-->
+
 </manifest>

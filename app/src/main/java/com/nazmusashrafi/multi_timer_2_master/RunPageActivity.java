@@ -195,6 +195,8 @@ public class RunPageActivity extends AppCompatActivity {
 
                     currentSound = dataSnapshot.getValue().toString();
 
+                }else{
+                    currentSound = "Bell";
                 }
 
             }
@@ -1034,7 +1036,11 @@ public class RunPageActivity extends AppCompatActivity {
 
         if((arrayColors.length==singleTimer.size())){
 
-            if(singleTimer.size()==2){
+            if(singleTimer.size()==1){
+                dataSet.setColors(new int[] {arrayColors[0]}, this);
+            }
+
+            else if(singleTimer.size()==2){
                 dataSet.setColors(new int[] {arrayColors[0],arrayColors[1]}, this);
             }else if(singleTimer.size()==3){
                 dataSet.setColors(new int[] {arrayColors[0],arrayColors[1],arrayColors[2]}, this);
@@ -1423,7 +1429,7 @@ public class RunPageActivity extends AppCompatActivity {
             //-------
 
 
-            Toast.makeText(RunPageActivity.this,"Multi-timer cancelled",Toast.LENGTH_LONG).show();
+            Toast.makeText(RunPageActivity.this,"Multi-timer ended",Toast.LENGTH_LONG).show();
             if(countDownTimer!=null){
                 countDownTimer.cancel();
                 timerRunning = false;

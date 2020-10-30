@@ -228,7 +228,7 @@ public class LoadBuildScreenActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                if(singleTimer.size()>1){
+//                if(singleTimer.size()>1){
 
 //                    alertDialogForTitle();
 
@@ -259,9 +259,9 @@ public class LoadBuildScreenActivity extends AppCompatActivity {
                     //if edited and started-create new id
                     //if edited and save - save in this id
 
-                }else{
-                    Toast.makeText(LoadBuildScreenActivity.this,"Must have at-least 2 timers",Toast.LENGTH_LONG).show();
-                }
+//                }else{
+//                    Toast.makeText(LoadBuildScreenActivity.this,"Must have at-least 2 timers",Toast.LENGTH_LONG).show();
+//                }
 
             }
         });
@@ -807,8 +807,9 @@ public class LoadBuildScreenActivity extends AppCompatActivity {
 
             if(editCounter==0 && !multitimersTemporaryPresent){
 
+
                 //REFERENCE---------
-                referenceMultiTimer = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimers").child(id);
+                referenceMultiTimer = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimers").child(idGotten);
 
 
                 referenceMultiTimer.addValueEventListener(new ValueEventListener() {
@@ -849,13 +850,15 @@ public class LoadBuildScreenActivity extends AppCompatActivity {
                     }
                 });
 
-
-
+                
 
             }else{
 
+                System.out.println("HITO");
+
+
                 //REFERENCE---------
-                referenceTemporaryMultiTimer = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimers temporary").child(id);
+                referenceTemporaryMultiTimer = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimers temporary").child(idGotten);
 
 
                 referenceTemporaryMultiTimer.addValueEventListener(new ValueEventListener() {
@@ -870,6 +873,10 @@ public class LoadBuildScreenActivity extends AppCompatActivity {
                             //populate inputs with retrieved data
                             String retrivedDesc = (String) dataSnapshot.child("singleTimerArrayList").child(Integer.toString(position)).child("description").getValue();
                             String retrivedTitle = (String) dataSnapshot.child("singleTimerArrayList").child(Integer.toString(position)).child("title").getValue();
+
+                            System.out.println("retrived title is "+ retrivedTitle);
+
+
                             Long retrivedTime = (Long) dataSnapshot.child("singleTimerArrayList").child(Integer.toString(position)).child("time").getValue();
                             String totalTimeDisplay = String.format("%02d hr : %02d min", TimeUnit.MILLISECONDS.toHours(retrivedTime),
                                     TimeUnit.MILLISECONDS.toMinutes(retrivedTime) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(retrivedTime)));
@@ -900,6 +907,8 @@ public class LoadBuildScreenActivity extends AppCompatActivity {
 
 
             }
+
+//            System.out.println("edit counter "+ editCounter);
 
 
             duration.setOnClickListener(new View.OnClickListener() {
@@ -1411,7 +1420,7 @@ public class LoadBuildScreenActivity extends AppCompatActivity {
                     //create multitimer
                     reference.child(id).setValue(multiTimer).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
-                        public void onComplete(@NonNull Task<Void> task) {  //BUG - saves to multitimer 
+                        public void onComplete(@NonNull Task<Void> task) {  //BUG - saves to multitimer
                             if(task.isSuccessful()){
                                 Toast.makeText(LoadBuildScreenActivity.this,"Multi-timer updated",Toast.LENGTH_LONG).show();
 

@@ -163,12 +163,12 @@ public class BuildScreenActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                if(singleTimer.size()>1){
+//                if(singleTimer.size()>1){
                     alertDialogForTitle();
 
-                }else{
-                    Toast.makeText(BuildScreenActivity.this,"Must have at-least 2 timers",Toast.LENGTH_LONG).show();
-                }
+//                }else{
+//                    Toast.makeText(BuildScreenActivity.this,"Must have at-least 2 timers",Toast.LENGTH_LONG).show();
+//                }
 
             }
         });

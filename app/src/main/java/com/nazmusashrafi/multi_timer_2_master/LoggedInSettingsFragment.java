@@ -532,10 +532,9 @@ public class LoggedInSettingsFragment extends Fragment implements AdapterView.On
         if(adapterView.getId() == R.id.spinnerSoundSelector){
 
             valueFromSpinner = adapterView.getItemAtPosition(position).toString();
-
-
+            
             //play sound on selected
-            if(counterSound>=2){
+            if(counterSound>1){
 
                 if(position==2){
                     batmanSound.start();

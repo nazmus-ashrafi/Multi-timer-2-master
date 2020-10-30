@@ -106,7 +106,6 @@ public class LoadRunPageActivity extends AppCompatActivity {
     //-----
 
 
-
     //variables & declarations
     PieChart pieChart;
     BuildScreenActivity buildPage = new BuildScreenActivity();
@@ -194,6 +193,8 @@ public class LoadRunPageActivity extends AppCompatActivity {
 
                     currentSound = dataSnapshot.getValue().toString();
 
+                }else{
+                    currentSound = "Bell";
                 }
 
             }
@@ -1036,7 +1037,11 @@ public class LoadRunPageActivity extends AppCompatActivity {
         System.out.println("this is the arrayColors.length : "+ arrayColors.length);
 
         if((arrayColors.length==singleTimer.size())) {
-            if (singleTimer.size() == 2) {
+
+            if(singleTimer.size()==1){
+                dataSet.setColors(new int[] {arrayColors[0]}, this);
+            }
+            else if (singleTimer.size() == 2) {
                 dataSet.setColors(new int[]{arrayColors[0], arrayColors[1]}, this);
             } else if (singleTimer.size() == 3) {
                 dataSet.setColors(new int[]{arrayColors[0], arrayColors[1], arrayColors[2]}, this);
@@ -1235,10 +1240,12 @@ public class LoadRunPageActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 System.out.println("Go to dashboard");
-                Intent intent = new Intent(getApplicationContext(), LoggedInDashboardFragment.class);
+                Intent intent = new Intent(getApplicationContext(), LoggedInTotalDashboardActivity.class);
                 startActivity(intent);
 
                 //
+
+                onBackPressed();
             }
         });
 
@@ -1407,7 +1414,7 @@ public class LoadRunPageActivity extends AppCompatActivity {
             //-------
 
 
-            Toast.makeText(LoadRunPageActivity.this,"Multi-timer cancelled",Toast.LENGTH_LONG).show();
+            Toast.makeText(LoadRunPageActivity.this,"Multi-timer ended",Toast.LENGTH_LONG).show();
             if(countDownTimer!=null){
                 countDownTimer.cancel();
                 timerRunning = false;
@@ -1427,7 +1434,7 @@ public class LoadRunPageActivity extends AppCompatActivity {
 
         }
 
-        Toast.makeText(LoadRunPageActivity.this,"Multi-timer cancelled",Toast.LENGTH_LONG).show();
+        Toast.makeText(LoadRunPageActivity.this,"Multi-timer ended",Toast.LENGTH_LONG).show();
 
         if(countDownTimer!=null){
             countDownTimer.cancel();
