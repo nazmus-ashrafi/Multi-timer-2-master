@@ -9,8 +9,8 @@ android {
         applicationId "com.nazmusashrafi.multi_timer_2_master"
         minSdkVersion 23
         targetSdkVersion 30
-        versionCode 1
-        versionName "1.0"
+        versionCode 3
+        versionName "1.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

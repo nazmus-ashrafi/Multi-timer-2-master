@@ -228,7 +228,7 @@ public class LoadBuildScreenActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-//                if(singleTimer.size()>1){
+                if(singleTimer.size()>0){
 
 //                    alertDialogForTitle();
 
@@ -259,9 +259,9 @@ public class LoadBuildScreenActivity extends AppCompatActivity {
                     //if edited and started-create new id
                     //if edited and save - save in this id
 
-//                }else{
-//                    Toast.makeText(LoadBuildScreenActivity.this,"Must have at-least 2 timers",Toast.LENGTH_LONG).show();
-//                }
+                }else{
+                    Toast.makeText(LoadBuildScreenActivity.this,"Must have at-least 1 timers",Toast.LENGTH_LONG).show();
+                }
 
             }
         });
@@ -271,7 +271,6 @@ public class LoadBuildScreenActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 System.out.println("Save timer, go to run page");
-
 
 
 
@@ -371,92 +370,100 @@ public class LoadBuildScreenActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
+                        if(singleTimer.size()>0){
 
-                        //REFERENCE---------
-                        DatabaseReference referenceMultiTimerArraySave = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID);
+                            //REFERENCE---------
+                            DatabaseReference referenceMultiTimerArraySave = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID);
 
-                        //filling in the title of the multi-timer
-                        m_Text = input.getText().toString();
-                        multiTimer.setTitle(m_Text);
+                            //filling in the title of the multi-timer
+                            m_Text = input.getText().toString();
+                            multiTimer.setTitle(m_Text);
 
-                        reference.child(idGotten).setValue(multiTimer);
-                        //----
+                            reference.child(idGotten).setValue(multiTimer);
+                            //----
 
-                        //get the multi-timer array from db
+                            //get the multi-timer array from db
 
 
-                        //update it and push back to db
-                        if(multiTimerArrayListToBeSaved.get(0).getSingleTimerArrayList()!=null){
-                            referenceMultiTimerArraySave.child("multitimer arraylist").child(index).child("singleTimerArrayList").setValue(multiTimerArrayListToBeSaved.get(0).getSingleTimerArrayList()).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if(task.isSuccessful()){
-                                        Toast.makeText(LoadBuildScreenActivity.this,"Multi-timer saved in saved timers",Toast.LENGTH_LONG).show();
-                                        //notify change in parent recycler adapter
+                            //update it and push back to db
+                            if(multiTimerArrayListToBeSaved.get(0).getSingleTimerArrayList()!=null){
+                                referenceMultiTimerArraySave.child("multitimer arraylist").child(index).child("singleTimerArrayList").setValue(multiTimerArrayListToBeSaved.get(0).getSingleTimerArrayList()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if(task.isSuccessful()){
+                                            Toast.makeText(LoadBuildScreenActivity.this,"Multi-timer saved in saved timers",Toast.LENGTH_LONG).show();
+                                            //notify change in parent recycler adapter
+
+                                        }
 
                                     }
+                                });
+
+                            }
+
+
+                            //
+
+                            System.out.println("Title for LoadBuildScreen at save is : " + multiTimer.getTitle() );
+                            System.out.println("Total time for LoadBuildScreen at save is : " + multiTimer.getTotalTime());
+
+                            referenceMultiTimerArraySave.child("multitimer arraylist").child(index).child("title").setValue(multiTimer.getTitle()); //title upload
+
+                            if(multiTimer.getTotalTime()!=0){
+                                referenceMultiTimerArraySave.child("multitimer arraylist").child(index).child("totalTime").setValue(multiTimer.getTotalTime()); //time upload
+
+                            }
+
+                            if(multiTimer.getTotalSteps()!=0){
+                                referenceMultiTimerArraySave.child("multitimer arraylist").child(index).child("totalSteps").setValue(multiTimer.getTotalSteps()); //steps upload
+
+
+                            }
+
+
+
+                            //update multitimer fix for not changing by saving
+
+                            //REFERENCE---------
+                            DatabaseReference referenceMultiTimerAr = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimer arraylist").child(indexGotten).child("singleTimerArrayList");
+
+                            referenceMultiTimerAr.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+
+                                    referenceMultiTimerSave.child(idGotten).child("singleTimerArrayList").setValue(dataSnapshot.getValue());
+
+
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
 
                                 }
                             });
 
-                        }
 
-
-                        //
-
-                        System.out.println("Title for LoadBuildScreen at save is : " + multiTimer.getTitle() );
-                        System.out.println("Total time for LoadBuildScreen at save is : " + multiTimer.getTotalTime());
-
-                        referenceMultiTimerArraySave.child("multitimer arraylist").child(index).child("title").setValue(multiTimer.getTitle()); //title upload
-                        
-                        if(multiTimer.getTotalTime()!=0){
-                            referenceMultiTimerArraySave.child("multitimer arraylist").child(index).child("totalTime").setValue(multiTimer.getTotalTime()); //time upload
-
-                        }
-
-                        if(multiTimer.getTotalSteps()!=0){
-                            referenceMultiTimerArraySave.child("multitimer arraylist").child(index).child("totalSteps").setValue(multiTimer.getTotalSteps()); //steps upload
-
-
-                        }
+                            //----
 
 
 
-                        //update multitimer fix for not changing by saving
+                            //goto total dashboard page
 
-                        //REFERENCE---------
-                        DatabaseReference referenceMultiTimerAr = FirebaseDatabase.getInstance().getReference().child("Users").child(onlineUserID).child("multitimer arraylist").child(indexGotten).child("singleTimerArrayList");
-
-                        referenceMultiTimerAr.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-
-                                referenceMultiTimerSave.child(idGotten).child("singleTimerArrayList").setValue(dataSnapshot.getValue());
-
-
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                            }
-                        });
-
-
-                        //----
-
-
-
-
-                        //goto total dashboard page
-
-                        Intent intent;
-                        intent = new Intent(LoadBuildScreenActivity.this, LoggedInTotalDashboardActivity.class);
-                        System.out.println(id);
-                        intent.putExtra("id", id);
+                            Intent intent;
+                            intent = new Intent(LoadBuildScreenActivity.this, LoggedInTotalDashboardActivity.class);
+                            System.out.println(id);
+                            intent.putExtra("id", id);
 //                            intent.putExtra("view",layoutManager)
-                        startActivity(intent);
+                            startActivity(intent);
+
+                        }else{
+
+                            Toast.makeText(LoadBuildScreenActivity.this,"Cannot save empty multitimer",Toast.LENGTH_LONG).show();
+
+                        }
+
+
 
 
 
